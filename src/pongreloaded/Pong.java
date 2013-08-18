@@ -74,6 +74,7 @@ public class Pong extends JFrame {
     int character;
     int pHX = 0;
     int pHY = 0;
+    char[] com = new char[3];
     boolean clientRun = true;
     boolean first = true;
     boolean isHost;
@@ -81,10 +82,8 @@ public class Pong extends JFrame {
     String process = "";
     StringBuffer instr;
     BufferedInputStream is;
-    ObjectInputStream ois;
     InputStreamReader isr;
     BufferedOutputStream bos;
-    ObjectOutputStream oos;
     OutputStreamWriter osw;
     InetAddress address;
     Socket connection;
@@ -178,29 +177,12 @@ public class Pong extends JFrame {
         localGameStarted = true;
     }
     
-    public void drawMultiGame(Graphics g){
-        // Read GameVars from server
-        gV = readFromServer();
-        
-        // Game
-        bClient.draw(g);
-        pClient.draw(g);
-        
-        // Score
-        g.setColor(Color.WHITE);
-        g.drawString(""+gV.hostScore, 15, 50);
-        g.drawString(""+gV.multiScore, 370, 50);
-        
-        // Send GameVars to Server
-        sendToServer(gV);
-    }
-    
     public void startRemoteGame(){
         bC.start();
         pC.start();
         
         // Send GameVars to Server
-        sendToServer(gV);
+        sendToServer();
         
         remoteGameStarted = true;
     }
@@ -373,6 +355,29 @@ public class Pong extends JFrame {
         g.drawString(""+b.p2Score, 370, 50);
     }
     
+    public void drawMultiGame(Graphics g){
+        // Read GameVars from server
+        if(isHost)
+            hReadFromServer();
+        else
+            readFromServer();
+        
+        // Game
+        bClient.draw(g);
+        pClient.draw(g);
+        
+        // Score
+        g.setColor(Color.WHITE);
+        g.drawString(""+gV.hostScore, 15, 50);
+        g.drawString(""+gV.multiScore, 370, 50);
+        
+        // Send GameVars to Server
+        if(isHost)
+            hSendToServer();
+        else
+            sendToServer();
+    }
+    
     public void drawPaused(Graphics g){
         drawLocalGame(g);
         // Pause Menu
@@ -451,10 +456,9 @@ public class Pong extends JFrame {
             System.out.println("Client Initialized!");
             bos = new BufferedOutputStream(connection.getOutputStream());
             osw = new OutputStreamWriter(bos, "US-ASCII");
-            oos = new ObjectOutputStream(connection.getOutputStream());
-            ois = new ObjectInputStream(connection.getInputStream());
-            sendToServer("Client " + connection.getInetAddress().getHostAddress() + " successfully connected.");
-            gV = readFromServer();
+            sendToServer();
+            System.out.println("Sent First GameVars");
+            readFromServer();
         }
         catch (IOException f) {
             System.out.println("IOException: " + f.getMessage());
@@ -464,7 +468,7 @@ public class Pong extends JFrame {
         }
     }
     
-    public void sendToServer(String message){
+    /*public void sendToServer(String message){
         try{
             TimeStamp = new java.util.Date().toString();
             System.out.println(TimeStamp + " [CLIENT] " + message);
@@ -472,35 +476,52 @@ public class Pong extends JFrame {
                 server.hProcess = message;
             }
             else{
-                osw.write(message + (char) 13);
+                osw.write((char) 12 + message + (char) 13);
                 osw.flush();
             }
         }
         catch(IOException ioe){
             
         }
-    }
+    }*/
     
-    public void sendToServer(GameVars gameVs){
+    public void sendToServer(){
         try{
-            oos.writeObject(gameVs);
-            oos.flush();
+            osw.write(gV.multiX);
+            osw.write(gV.multiY);
+            osw.write(gV.multiScore);
+            osw.flush();
         }
         catch(IOException ioe){
             
         }
     }
     
-    public GameVars readFromServer(){
-        GameVars gameVs = gV;
+    public void hSendToServer(){
+        server.gVS.hostX = gV.hostX;
+        server.gVS.hostY = gV.hostY;
+        server.gVS.hostScore = gV.hostScore;
+    }
+    
+    public void readFromServer(){
         try {
-            gameVs = (GameVars) ois.readObject();
+            isr.read(com);
+            gV.hostX = com[0];
+            gV.hostY = com[1];
+            gV.hostScore = com[2];
         } catch (IOException ex) {
             Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return gameVs;
+        System.out.println(TimeStamp + " [" + connection.getInetAddress().getHostAddress() + "] Recieved Host GameVars");
+        System.out.println(""+gV.hostScore + "\n"+gV.multiScore + "\n"+gV.hostX + "\n"+gV.hostY + "\n"+gV.multiX + "\n"+gV.multiY);
+    }
+    
+    public void hReadFromServer(){
+        gV.multiX = server.gVS.multiX;
+        gV.multiY = server.gVS.multiY;
+        gV.multiScore = server.gVS.multiScore;
+        System.out.println(TimeStamp + " [" + server.ipAddress + "] Recieved Multi GameVars");
+        System.out.println(""+gV.hostScore + "\n"+gV.multiScore + "\n"+gV.hostX + "\n"+gV.hostY + "\n"+gV.multiX + "\n"+gV.multiY);
     }
     
     public void closeConnection(){
@@ -510,8 +531,6 @@ public class Pong extends JFrame {
             isr.close();
             bos.close();
             osw.close();
-            ois.close();
-            oos.close();
             connection.close();
             System.out.println("Connection closed.");
         }
@@ -777,11 +796,12 @@ public class Pong extends JFrame {
                     s = new Thread(server);
                     s.start();
                     isHost = true;
-                    pClient = new Paddle(15, 140, 3);
                     isMultiMenu = false;
                     ipText.setVisible(false);
                     connectPortText.setVisible(false);
                     hostPortText.setVisible(false);
+                    remoteGameStarted = false;
+                    pClient = new Paddle(15, 140, 3);
                 }
                 catch(NumberFormatException nfe){
                     

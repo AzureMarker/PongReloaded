@@ -15,6 +15,7 @@ import pongreloaded.Pong.GameVars;
 public class Server extends JFrame implements Runnable{
     // Server Variables
     int character;
+    char[] com = new char[3];
     boolean first = true;
     boolean isHostConnected = false;
     boolean isClientConnected = false;
@@ -25,10 +26,8 @@ public class Server extends JFrame implements Runnable{
     String hProcess;
     StringBuffer process;
     BufferedInputStream is;
-    ObjectInputStream ois;
     InputStreamReader isr;
     BufferedOutputStream os;
-    ObjectOutputStream oos;
     OutputStreamWriter osw;
     ServerSocket serverSocket;
     Socket connection;
@@ -78,22 +77,20 @@ public class Server extends JFrame implements Runnable{
     
     private void tick(){
         conPrint("Server Tick...");
+        TimeStamp = new java.util.Date().toString();
         try{
             if(first){
                 connection = serverSocket.accept();
                 isClientConnected = true;
                 is = new BufferedInputStream(connection.getInputStream());
                 isr = new InputStreamReader(is);
-                ois = new ObjectInputStream(connection.getInputStream());
                 process = new StringBuffer();
                 os = new BufferedOutputStream(connection.getOutputStream());
-                oos = new ObjectOutputStream(connection.getOutputStream());
                 osw = new OutputStreamWriter(os, "US-ASCII");
-                readFromClient();
+                conPrint(TimeStamp + " [" + connection.getInetAddress().getHostAddress() + "] Client successfully connected");
             }
-            conPrint(readStringFromClient());
             readFromClient();
-            sendGVToClient();
+            sendToClient();
         }
         catch(IOException ioe){
             try {
@@ -107,17 +104,19 @@ public class Server extends JFrame implements Runnable{
         }
     }
     
-    public void sendGVToClient(){
+    public void sendToClient(){
         try{
-            oos.writeObject(gVS);
-            oos.flush();
+            osw.write(gVS.hostX);
+            osw.write(gVS.hostY);
+            osw.write(gVS.hostScore);
+            osw.flush();
         }
         catch(IOException ioe){
             
         }
     }
     
-    public String readStringFromClient(){
+    /*public String readStringFromClient(){
         try{
             TimeStamp = new java.util.Date().toString();
             process.setLength(0);
@@ -132,21 +131,20 @@ public class Server extends JFrame implements Runnable{
         }
         
         return TimeStamp + " [" + connection.getInetAddress().getHostAddress() + "] " + process;
-    }
+    }*/
     
-    public GameVars readFromClient(){
-        GameVars gameVs = gVS;
+    public void readFromClient(){
         TimeStamp = new java.util.Date().toString();
         try {
-            gameVs = (GameVars) ois.readObject();
+            isr.read(com);
+            gVS.multiX = com[0];
+            gVS.multiY = com[1];
+            gVS.multiScore = com[2];
         } catch (IOException ex) {
-            Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
             Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ex);
         }
         conPrint(TimeStamp + " [" + connection.getInetAddress().getHostAddress() + "] Recieved GameVars");
-        conPrint(""+gameVs.hostScore + "\n"+gameVs.multiScore + "\n"+gameVs.hostX + "\n"+gameVs.hostY + "\n"+gameVs.multiX + "\n"+gameVs.multiY);
-        return gameVs;
+        conPrint(""+gVS.hostScore + "\n"+gVS.multiScore + "\n"+gVS.hostX + "\n"+gVS.hostY + "\n"+gVS.multiX + "\n"+gVS.multiY);
     }
     
     public void closeServer(){
@@ -157,8 +155,6 @@ public class Server extends JFrame implements Runnable{
             isr.close();
             os.close();
             osw.close();
-            ois.close();
-            oos.close();
             serverSocket.close();
             run = false;
             System.out.println("Server Closed Sucessfully!");
