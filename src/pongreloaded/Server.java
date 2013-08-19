@@ -15,7 +15,7 @@ import pongreloaded.Pong.GameVars;
 public class Server extends JFrame implements Runnable{
     // Server Variables
     int character;
-    char[] com = new char[3];
+    char[] com = new char[4];
     boolean first = true;
     boolean isHostConnected = false;
     boolean isClientConnected = false;
@@ -24,7 +24,6 @@ public class Server extends JFrame implements Runnable{
     String TimeStamp;
     String returnCode;
     String hProcess;
-    StringBuffer process;
     BufferedInputStream is;
     InputStreamReader isr;
     BufferedOutputStream os;
@@ -84,16 +83,27 @@ public class Server extends JFrame implements Runnable{
                 isClientConnected = true;
                 is = new BufferedInputStream(connection.getInputStream());
                 isr = new InputStreamReader(is);
-                process = new StringBuffer();
                 os = new BufferedOutputStream(connection.getOutputStream());
                 osw = new OutputStreamWriter(os, "US-ASCII");
                 conPrint(TimeStamp + " [" + connection.getInetAddress().getHostAddress() + "] Client successfully connected");
+                Thread.sleep(1000000);
             }
             readFromClient();
             sendToClient();
+        } catch (InterruptedException ie) {
+            try {
+                Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ie);
+                conPrint("InterruptedException, closing connection...");
+                connection.close();
+                conPrint("Connection closed.");
+            }
+            catch (IOException ioe){
+                
+            }
         }
         catch(IOException ioe){
             try {
+                Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ioe);
                 conPrint("IOException, closing connection...");
                 connection.close();
                 conPrint("Connection closed.");
@@ -135,16 +145,25 @@ public class Server extends JFrame implements Runnable{
     
     public void readFromClient(){
         TimeStamp = new java.util.Date().toString();
+        int num = -2;
         try {
-            isr.read(com);
+            num = isr.read(com);
             gVS.multiX = com[0];
             gVS.multiY = com[1];
             gVS.multiScore = com[2];
-        } catch (IOException ex) {
+            if(com[3] == 1)
+                gVS.isMultiReady = true;
+            else
+                gVS.isMultiReady = false;
+        }
+        catch(IOException ex) {
             Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ex);
         }
-        conPrint(TimeStamp + " [" + connection.getInetAddress().getHostAddress() + "] Recieved GameVars");
-        conPrint(""+gVS.hostScore + "\n"+gVS.multiScore + "\n"+gVS.hostX + "\n"+gVS.hostY + "\n"+gVS.multiX + "\n"+gVS.multiY);
+        catch(NullPointerException npe){
+            Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, npe);
+        }
+        conPrint(TimeStamp + " [" + connection.getInetAddress().getHostAddress() + "] Recieved Multi GameVars, " + num);
+        conPrint(""+gVS.multiScore + "\n"+gVS.multiX + "\n"+gVS.multiY + "\n");
     }
     
     public void closeServer(){

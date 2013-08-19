@@ -54,12 +54,14 @@ public class Pong extends JFrame {
     
     // Client Variables
     public class GameVars{
-        int hostScore;
-        int multiScore;
-        int hostX;
-        int hostY;
-        int multiX;
-        int multiY;
+        int hostScore = 0;
+        int multiScore = 0;
+        int hostX = 0;
+        int hostY = 0;
+        int multiX = 0;
+        int multiY = 0;
+        boolean isHostReady = false;
+        boolean isMultiReady = false;
         
         public GameVars (int hS, int mS, int hX, int hY, int mX, int mY) {
             hostScore = hS;
@@ -68,9 +70,11 @@ public class Pong extends JFrame {
             hostY = hY;
             multiX = mX;
             multiY = mY;
+            isHostReady = false;
+            isMultiReady = false;
         }
     }
-    GameVars gV;
+    GameVars gV = new GameVars(0, 0, 0, 0, 0, 0);
     int character;
     int pHX = 0;
     int pHY = 0;
@@ -456,15 +460,23 @@ public class Pong extends JFrame {
             System.out.println("Client Initialized!");
             bos = new BufferedOutputStream(connection.getOutputStream());
             osw = new OutputStreamWriter(bos, "US-ASCII");
+            is = new BufferedInputStream(connection.getInputStream());
+            isr = new InputStreamReader(is);
+            gV.isMultiReady = true;
             sendToServer();
             System.out.println("Sent First GameVars");
             readFromServer();
+            isMultiMenu = false;
+            ipText.setVisible(false);
+            connectPortText.setVisible(false);
+            hostPortText.setVisible(false);
+            startRemoteGame();
         }
-        catch (IOException f) {
-            System.out.println("IOException: " + f.getMessage());
+        catch (IOException ioe) {
+            Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ioe);
         }
-        catch (Exception g) {
-            System.out.println("Exception: " + g.getMessage());
+        catch (Exception e) {
+            Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, e);
         }
     }
     
@@ -490,10 +502,11 @@ public class Pong extends JFrame {
             osw.write(gV.multiX);
             osw.write(gV.multiY);
             osw.write(gV.multiScore);
+            osw.write(1); // Sets isMultiReady to true on server
             osw.flush();
         }
-        catch(IOException ioe){
-            
+        catch (IOException ioe) {
+            Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ioe);
         }
     }
     
@@ -501,6 +514,7 @@ public class Pong extends JFrame {
         server.gVS.hostX = gV.hostX;
         server.gVS.hostY = gV.hostY;
         server.gVS.hostScore = gV.hostScore;
+        server.gVS.isHostReady = true;
     }
     
     public void readFromServer(){
@@ -513,15 +527,16 @@ public class Pong extends JFrame {
             Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println(TimeStamp + " [" + connection.getInetAddress().getHostAddress() + "] Recieved Host GameVars");
-        System.out.println(""+gV.hostScore + "\n"+gV.multiScore + "\n"+gV.hostX + "\n"+gV.hostY + "\n"+gV.multiX + "\n"+gV.multiY);
+        System.out.println(""+gV.hostScore + "\n"+gV.hostX + "\n"+gV.hostY + "\n");
     }
     
     public void hReadFromServer(){
         gV.multiX = server.gVS.multiX;
         gV.multiY = server.gVS.multiY;
         gV.multiScore = server.gVS.multiScore;
+        gV.isMultiReady = server.gVS.isMultiReady;
         System.out.println(TimeStamp + " [" + server.ipAddress + "] Recieved Multi GameVars");
-        System.out.println(""+gV.hostScore + "\n"+gV.multiScore + "\n"+gV.hostX + "\n"+gV.hostY + "\n"+gV.multiX + "\n"+gV.multiY);
+        System.out.println(""+gV.multiScore + "\n"+gV.multiX + "\n"+gV.multiY + "\n");
     }
     
     public void closeConnection(){
@@ -800,8 +815,8 @@ public class Pong extends JFrame {
                     ipText.setVisible(false);
                     connectPortText.setVisible(false);
                     hostPortText.setVisible(false);
-                    remoteGameStarted = false;
-                    pClient = new Paddle(15, 140, 3);
+                    //pClient = new Paddle(15, 140, 3);
+                    startRemoteGame();
                 }
                 catch(NumberFormatException nfe){
                     
