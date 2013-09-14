@@ -5,6 +5,9 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 
+/**
+ * @author Mcat12
+ */
 public class Paddle implements Runnable {
     // Global Variables
     volatile boolean isPaused = false;

@@ -8,6 +8,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.Border;
+import org.net.Msg.*;
+import org.net.p2p.*;
 
 /**
  * @author Mcat12
@@ -29,7 +31,7 @@ public class Pong extends JFrame {
     Rectangle multiButton = new Rectangle(215, 140, 100, 25);
     Rectangle connectButton = new Rectangle(50, 170, 100, 25);
     Rectangle hostButton = new Rectangle(250, 140, 100, 25);
-    Rectangle multiToMainButton = new Rectangle(25, 250, 100, 25);
+    Rectangle multiToMainButton = new Rectangle(25, 250, 100, 25); 
     
     // Multiplayer Text Fields
     JTextField ipText = new JTextField(){
@@ -48,54 +50,32 @@ public class Pong extends JFrame {
         }
     };
     
-    // Multiplayer Server
-    Server server;
-    Thread s;
+    // Multiplayer Connection
+    jnmp2p jnm;
+    Connection connection;
+    Protocol prot;
+    BufferedReader in;
+    String ip;
+    static String msgHeader;
+    static int[] msgBody = new int[6];
+    static int intMsgBody;
+    org.net.Msg.Msg msg;
+    MsgHandler msgHandler;
     
     // Client Variables
-    public class GameVars{
-        int hostScore = 0;
-        int multiScore = 0;
-        int hostX = 0;
-        int hostY = 0;
-        int multiX = 0;
-        int multiY = 0;
-        boolean isHostReady = false;
-        boolean isMultiReady = false;
-        
-        public GameVars (int hS, int mS, int hX, int hY, int mX, int mY) {
-            hostScore = hS;
-            multiScore = mS;
-            hostX = hX;
-            hostY = hY;
-            multiX = mX;
-            multiY = mY;
-            isHostReady = false;
-            isMultiReady = false;
-        }
-    }
-    GameVars gV = new GameVars(0, 0, 0, 0, 0, 0);
     int character;
     int pHX = 0;
     int pHY = 0;
+    static int[] arrayXY = new int[6];
     char[] com = new char[3];
     boolean clientRun = true;
     boolean first = true;
     boolean isHost;
     String TimeStamp;
-    String process = "";
-    StringBuffer instr;
-    BufferedInputStream is;
-    InputStreamReader isr;
-    BufferedOutputStream bos;
-    OutputStreamWriter osw;
-    InetAddress address;
-    Socket connection;
-    Paddle pClient;
-    Ball bClient;
-    Thread pC;
-    Thread bC;
-    Rectangle pHost;
+    static Paddle pClient;
+    static Paddle pMulti;
+    static Ball bClient = new Ball(193, 143, true);
+    
     
     // Ball Objects
     static Ball b = new Ball(193, 143, true);
@@ -104,12 +84,17 @@ public class Pong extends JFrame {
     Thread ball = new Thread(b);
     Thread p1 = new Thread(b.p1);
     Thread p2 = new Thread(b.p2);
+    Thread bC = new Thread(bClient);
+    Thread pC = new Thread(bClient.p1);
+    Thread pM = new Thread(bClient.p2);
+    Thread mH = new Thread(msgHandler);
     
     // Game Variables
+    private static Pong p;
     int difficulty = 1;
     int players = 1;
     int mode = 2;
-    int winScore = 10;
+    static int winScore = 10;
     int winID;
     boolean localGameStarted = false;
     boolean remoteGameStarted = false;
@@ -163,7 +148,7 @@ public class Pong extends JFrame {
     }
     
     public static void main(String[] args){
-        Pong p = new Pong();
+        p = new Pong();
     }
     
     public void startLocalGame(){
@@ -185,8 +170,9 @@ public class Pong extends JFrame {
         bC.start();
         pC.start();
         
-        // Send GameVars to Server
-        sendToServer();
+        // Send GameVars to Player
+        if(isHost)
+            sendVarsToServer(b.p1.x, b.p1.y, b.p1Score, b.x, b.y);
         
         remoteGameStarted = true;
     }
@@ -360,26 +346,18 @@ public class Pong extends JFrame {
     }
     
     public void drawMultiGame(Graphics g){
-        // Read GameVars from server
-        if(isHost)
-            hReadFromServer();
-        else
-            readFromServer();
-        
         // Game
         bClient.draw(g);
         pClient.draw(g);
+        pMulti.draw(g);
         
         // Score
         g.setColor(Color.WHITE);
-        g.drawString(""+gV.hostScore, 15, 50);
-        g.drawString(""+gV.multiScore, 370, 50);
+        g.drawString(""+bClient.p1Score, 15, 50);
+        g.drawString(""+bClient.p2Score, 370, 50);
         
-        // Send GameVars to Server
-        if(isHost)
-            hSendToServer();
-        else
-            sendToServer();
+        // Send Variables to Server
+            sendVarsToServer(b.p1.x, b.p1.y, b.p1Score, b.x, b.y);
     }
     
     public void drawPaused(Graphics g){
@@ -448,115 +426,82 @@ public class Pong extends JFrame {
             winID = 2;
             return true;
         }
+        if(bClient.p1Score >= winScore){
+            winID = 1;
+            return true;
+        }
+        if(bClient.p2Score >= winScore){
+            winID = 2;
+            return true;
+        }
         return false;
+    }
+    
+    public void host(int port){
+        System.out.println("Server Initializing...");
+        try {
+            mH.start();
+            prot = new Protocol(mH);
+            addMsgHandlers();
+            jnm = new jnmp2p(prot, Integer.parseInt(hostPortText.getText()));
+            connection = jnm.connect(InetAddress.getLocalHost().getHostAddress().toString());
+            System.out.println("Initialized Server, recieving variables...");
+            bClient.x = 100;
+            while(bClient.x != 1){
+                
+            }
+            System.out.println("Recieved variables! Sending Max Score...");
+            msgHeader = "setMaxScore";
+            intMsgBody = winScore;
+            msg = connection.createMsg(msgHeader, intMsgBody);
+            connection.sendMsg(msg);
+            System.out.println("Sent Max Score!");
+        }
+        catch (UnknownHostException ex){
+            Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void connect(String ip, int port){
         System.out.println("Client Initializing...");
-        instr = new StringBuffer();
         try{
-            address = InetAddress.getByName(ip);
-            connection = new Socket(address, port);
-            System.out.println("Client Initialized!");
-            bos = new BufferedOutputStream(connection.getOutputStream());
-            osw = new OutputStreamWriter(bos, "US-ASCII");
-            is = new BufferedInputStream(connection.getInputStream());
-            isr = new InputStreamReader(is);
-            gV.isMultiReady = true;
-            sendToServer();
-            System.out.println("Sent First GameVars");
-            readFromServer();
-            isMultiMenu = false;
-            ipText.setVisible(false);
-            connectPortText.setVisible(false);
-            hostPortText.setVisible(false);
-            startRemoteGame();
-        }
-        catch (IOException ioe) {
-            Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ioe);
+            mH.start();
+            prot = new Protocol(mH);
+            addMsgHandlers();
+            jnm = new jnmp2p(prot, Integer.parseInt(connectPortText.getText()));
+            connection = jnm.connect(ipText.getText());
+            System.out.println("Initialized Client, sending variables...");
+            sendVarsToServer(1, 2, 0, 3, 4);
+            System.out.println("Sent variables!");
         }
         catch (Exception e) {
             Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, e);
         }
     }
     
-    /*public void sendToServer(String message){
-        try{
-            TimeStamp = new java.util.Date().toString();
-            System.out.println(TimeStamp + " [CLIENT] " + message);
-            if(isHost){
-                server.hProcess = message;
-            }
-            else{
-                osw.write((char) 12 + message + (char) 13);
-                osw.flush();
-            }
-        }
-        catch(IOException ioe){
-            
-        }
-    }*/
-    
-    public void sendToServer(){
-        try{
-            osw.write(gV.multiX);
-            osw.write(gV.multiY);
-            osw.write(gV.multiScore);
-            osw.write(1); // Sets isMultiReady to true on server
-            osw.flush();
-        }
-        catch (IOException ioe) {
-            Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ioe);
-        }
+    public void sendVarsToServer(int x, int y, int score, int bx, int by){
+        msgHeader = "getVars";
+        msgBody[0] = x;
+        msgBody[1] = y;
+        msgBody[2] = bx;
+        msgBody[3] = by;
+        if(isHost)
+            msgBody[4] = score;
+        else
+            msgBody[5] = score;
+        msg = connection.createMsg(msgHeader, msgBody);
+        connection.sendMsg(msg);
     }
     
-    public void hSendToServer(){
-        server.gVS.hostX = gV.hostX;
-        server.gVS.hostY = gV.hostY;
-        server.gVS.hostScore = gV.hostScore;
-        server.gVS.isHostReady = true;
-    }
-    
-    public void readFromServer(){
-        try {
-            isr.read(com);
-            gV.hostX = com[0];
-            gV.hostY = com[1];
-            gV.hostScore = com[2];
-        } catch (IOException ex) {
-            Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        System.out.println(TimeStamp + " [" + connection.getInetAddress().getHostAddress() + "] Recieved Host GameVars");
-        System.out.println(""+gV.hostScore + "\n"+gV.hostX + "\n"+gV.hostY + "\n");
-    }
-    
-    public void hReadFromServer(){
-        gV.multiX = server.gVS.multiX;
-        gV.multiY = server.gVS.multiY;
-        gV.multiScore = server.gVS.multiScore;
-        gV.isMultiReady = server.gVS.isMultiReady;
-        System.out.println(TimeStamp + " [" + server.ipAddress + "] Recieved Multi GameVars");
-        System.out.println(""+gV.multiScore + "\n"+gV.multiX + "\n"+gV.multiY + "\n");
+    public void addMsgHandlers(){
+        prot.addMsgHandler("getVars", "getVariables");
+        prot.addMsgHandler("setMaxScore", "SetMaxScore");
     }
     
     public void closeConnection(){
-        try{
             System.out.println("Closing connection...");
-            is.close();
-            isr.close();
-            bos.close();
-            osw.close();
-            connection.close();
+            jnmp2p.close(connection);
             System.out.println("Connection closed.");
-        }
-        catch(IOException ioe){
-            try {
-                System.out.println("IOException, closing connection...");
-                connection.close();
-                System.out.println("Connection closed.");
-            }
-            catch (IOException e) {}
-        }
     }
     
     /////////EVENT LISTENER CLASSES\\\\\\\\\
@@ -779,15 +724,10 @@ public class Pong extends JFrame {
             if(mx > exitButton.x && mx < exitButton.x+exitButton.width && my > exitButton.y && my < exitButton.y+exitButton.height && localGameStarted == false && isMultiMenu == false){
                 try{
                     if(Pong.this.connection != null)
-                        Pong.this.connection.close();
-                    if(server != null)
-                    {
-                        server.conPrint("Closing...");
-                        server.closeServer();
-                    }
+                        closeConnection();
                     dispose();
-                }catch(IOException ioe){
-                    System.out.println("IOException!: " + ioe.getMessage());
+                }catch(Exception ex){
+                    System.out.println("Exception!: " + ex.getMessage());
                 }
             }
             
@@ -797,8 +737,10 @@ public class Pong extends JFrame {
             
             // Check if just Pressed Connect Button
             if(mx > connectButton.x && mx < connectButton.x+connectButton.width && my > connectButton.y && my < connectButton.y+connectButton.height && localGameStarted == false && isMultiMenu == true){
-                if(!isHost)
+                if(!isHost){
                     connect(ipText.getText(), Integer.parseInt(connectPortText.getText()));
+                    startRemoteGame();
+                }
                 else
                     ipText.setText("You are host");
             }
@@ -806,10 +748,7 @@ public class Pong extends JFrame {
             // Check if just Pressed Host Button
             if(mx > hostButton.x && mx < hostButton.x+hostButton.width && my > hostButton.y && my < hostButton.y+hostButton.height && localGameStarted == false && isMultiMenu == true){
                 try{
-                    server = new Server(Integer.parseInt(hostPortText.getText()));
-                    server.serverSocket.getLocalPort();
-                    s = new Thread(server);
-                    s.start();
+                    host(Integer.parseInt(hostPortText.getText()));
                     isHost = true;
                     isMultiMenu = false;
                     ipText.setVisible(false);

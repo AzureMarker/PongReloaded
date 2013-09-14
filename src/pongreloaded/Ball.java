@@ -6,7 +6,7 @@ import java.awt.Rectangle;
 import java.util.Random;
 
 /**
- * @author Mark
+ * @author Mcat12
  */
 public class Ball implements Runnable {
     // Gloabal variables
