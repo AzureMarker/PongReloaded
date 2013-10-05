@@ -11,7 +11,9 @@ import java.awt.event.KeyEvent;
 public class Paddle implements Runnable {
     // Global Variables
     volatile boolean isPaused = false;
+    volatile boolean stop = false;
     int x, y, yDirection, id;
+    Screen screen;
     
     // Difficulty
     int difficulty = 5;
@@ -25,11 +27,24 @@ public class Paddle implements Runnable {
     // Paddle Object
     Rectangle paddle;
     
-    public Paddle(int x, int y, int id){
-        this.x = x;
+    public Paddle(int x, int y, int id, LocalGame screen){
+    	this.x = x;
         this.y = y;
         this.id = id;
+        this.screen = screen;
         paddle = new Rectangle(x, y, 10, 50);
+    }
+    
+    public Paddle(int x, int y, int id, MultiplayerGame screen){
+    	this.x = x;
+        this.y = y;
+        this.id = id;
+        this.screen = screen;
+        paddle = new Rectangle(x, y, 10, 50);
+    }
+    
+    public void setScreen(Screen screen) {
+    	this.screen = screen;
     }
     
     public void keyPressed(KeyEvent e){
@@ -38,34 +53,34 @@ public class Paddle implements Runnable {
                 System.out.println("Please enter a valid ID in Paddle Constructer");
                 break;
             case 1:
-                if(e.getKeyCode() == e.VK_W){
+                if(e.getKeyCode() == KeyEvent.VK_W){
                     setYDirection(-1);
                 }
-                if(e.getKeyCode() == e.VK_S){
+                if(e.getKeyCode() == KeyEvent.VK_S){
                     setYDirection(+1);
                 }
                 break;
             case 2:
-                if(e.getKeyCode() == e.VK_UP){
+                if(e.getKeyCode() == KeyEvent.VK_UP){
                     setYDirection(-1);
                 }
-                if(e.getKeyCode() == e.VK_DOWN){
+                if(e.getKeyCode() == KeyEvent.VK_DOWN){
                     setYDirection(+1);
                 }
                 break;
             case 3:
-                if(e.getKeyCode() == e.VK_W){
+                if(e.getKeyCode() == KeyEvent.VK_W){
                     setYDirection(-1);
                 }
-                if(e.getKeyCode() == e.VK_S){
+                if(e.getKeyCode() == KeyEvent.VK_S){
                     setYDirection(+1);
                 }
                 break;
             case 4:
-                if(e.getKeyCode() == e.VK_W){
+                if(e.getKeyCode() == KeyEvent.VK_W){
                     setYDirection(-1);
                 }
-                if(e.getKeyCode() == e.VK_S){
+                if(e.getKeyCode() == KeyEvent.VK_S){
                     setYDirection(+1);
                 }
                 break;
@@ -78,34 +93,34 @@ public class Paddle implements Runnable {
                 System.out.println("Please enter a valid ID in Paddle Constructer");
                 break;
             case 1:
-                if(e.getKeyCode() == e.VK_W){
+                if(e.getKeyCode() == KeyEvent.VK_W){
                     setYDirection(0);
                 }
-                if(e.getKeyCode() == e.VK_S){
+                if(e.getKeyCode() == KeyEvent.VK_S){
                     setYDirection(0);
                 }
                 break;
             case 2:
-                if(e.getKeyCode() == e.VK_UP){
+                if(e.getKeyCode() == KeyEvent.VK_UP){
                     setYDirection(0);
                 }
-                if(e.getKeyCode() == e.VK_DOWN){
+                if(e.getKeyCode() == KeyEvent.VK_DOWN){
                     setYDirection(0);
                 }
                 break;
             case 3:
-                if(e.getKeyCode() == e.VK_W){
+                if(e.getKeyCode() == KeyEvent.VK_W){
                     setYDirection(0);
                 }
-                if(e.getKeyCode() == e.VK_S){
+                if(e.getKeyCode() == KeyEvent.VK_S){
                     setYDirection(0);
                 }
                 break;
             case 4:
-                if(e.getKeyCode() == e.VK_W){
+                if(e.getKeyCode() == KeyEvent.VK_W){
                     setYDirection(0);
                 }
-                if(e.getKeyCode() == e.VK_S){
+                if(e.getKeyCode() == KeyEvent.VK_S){
                     setYDirection(0);
                 }
                 break;
@@ -124,9 +139,9 @@ public class Paddle implements Runnable {
             paddle.y = 250;
         if(this.id == 2 && players == 1){
             collision();
-            if(Pong.b.getY() < paddle.y+25)
+            if(((LocalGame) screen).getBallY() < paddle.y+25)
                 setYDirection(-1);
-            if(Pong.b.getY() > paddle.y+25){
+            if(((LocalGame) screen).getBallY() > paddle.y+25){
                 setYDirection(+1);
             }
         }
@@ -191,10 +206,14 @@ public class Paddle implements Runnable {
         isPaused = sp;
     }
     
+    public void stop() {
+    	stop = true;
+    }
+    
     @Override
     public void run() {
         try{
-            while(true){
+            while(stop == false){
                 while(!isPaused){
                     move();
                     Thread.sleep(difficulty);

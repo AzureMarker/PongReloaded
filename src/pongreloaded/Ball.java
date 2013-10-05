@@ -9,8 +9,9 @@ import java.util.Random;
  * @author Mcat12
  */
 public class Ball implements Runnable {
-    // Gloabal variables
+    // Global variables
     volatile boolean isPaused = false;
+    volatile boolean stop = false;
     int x, y, xDirection, yDirection;
     
     // Difficulty
@@ -27,7 +28,32 @@ public class Ball implements Runnable {
     // Ball Object
     Rectangle ball;
     
-    public Ball(int x, int y, boolean paddles){
+    public Ball(int x, int y, boolean paddles, LocalGame LGscreen){
+        p1Score = p2Score = 0;
+        this.x = x;
+        this.y = y;
+        
+        // Set Ball Moving Randomly
+        Random r = new Random();
+        int rDir = r.nextInt(2);
+        if(rDir == 0)
+            rDir--;
+        setXDirection(rDir);
+        int yrDir = r.nextInt(2);
+        if(yrDir == 0)
+            yrDir--;
+        setYDirection(yrDir);
+        
+        // Create the Ball
+        ball = new Rectangle(this.x, this.y, 7, 7);
+        
+        if(paddles){
+            p1 = new Paddle(15, 140, 1, LGscreen);
+            p2 = new Paddle(370, 140, 2, LGscreen);
+        }
+    }
+    
+    public Ball(int x, int y, boolean paddles, MultiplayerGame MGscreen){
         p1Score = p2Score = 0;
         this.x = x;
         this.y = y;
@@ -47,8 +73,8 @@ public class Ball implements Runnable {
         ball = new Rectangle(this.x, this.y, 7, 7);
         
         if(paddles){
-            p1 = new Paddle(15, 140, 1);
-            p2 = new Paddle(370, 140, 2);
+            p1 = new Paddle(15, 140, 1, MGscreen);
+            p2 = new Paddle(370, 140, 2, MGscreen);
         }
     }
     
@@ -108,15 +134,20 @@ public class Ball implements Runnable {
         isPaused = sp;
     }
     
+    
+    public void stop() {
+    	stop = true;
+    }
+    
     @Override
     public void run(){
         try{
-            while(true){
-                while(!isPaused){
-                    move();
-                    Thread.sleep(difficulty);
-                }
-            }
+        	while(stop == false) {
+        		while(isPaused == false){
+        			move();
+    				Thread.sleep(difficulty);
+        		}
+        	}
         }
         catch(Exception e){
             System.err.println(e.getMessage());
