@@ -47,7 +47,8 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     // FPS
     private long now;
     private long framesTimer = 0;
-    private long beforeTime;
+    @SuppressWarnings("unused")
+	private long beforeTime;
     private int framesCount = 0;
     private int framesCountAvg = 0;
     
@@ -102,10 +103,6 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     
     public static void main(String[] args){
         p = new Pong(args);
-    }
-    
-    public static void setBackgroundColor(Color color) {
-    	//Pong.getContentPane().setBackground(color);
     }
     
     public void keyPressed(KeyEvent key) {
@@ -176,7 +173,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         	this.getContentPane().setBackground(Color.DARK_GRAY);
         
         if(isFinished == true) {
-        	screen = new FinishScreen(winID);
+        	screen = new FinishScreen(GWIDTH, GHEIGHT, winID);
         	isFinished = false;
         }
         
