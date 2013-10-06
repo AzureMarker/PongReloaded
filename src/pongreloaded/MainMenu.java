@@ -248,14 +248,10 @@ public class MainMenu implements Screen {
         
         // Check if Start Button was pressed
 	    if(mx > startButton.x && mx < startButton.x+startButton.width && my > startButton.y && my < startButton.y+startButton.height) {
-	        if(isFirstRun == true) {
-	        	System.out.println("First LocalGame");
+	        if(isFirstRun == true)
 	        	return new LocalGame(GWIDTH, GHEIGHT, ballDiff, p2Diff, players, mode, winScore);
-	        }
-	        else {
-	        	System.out.println("Full LocalGame");
+	        else
 	        	return new LocalGame(GWIDTH, GHEIGHT, ballDiff, p2Diff, players, mode, winScore, ballX, ballY, p1Y, p2Y, xDir, yDir, p1Score, p2Score);
-	        }
 	    }
 	    
 	    // Check if Score Button was pressed

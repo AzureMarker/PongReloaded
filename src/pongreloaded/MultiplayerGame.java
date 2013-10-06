@@ -64,7 +64,7 @@ public class MultiplayerGame implements Screen {
 		pC = new Thread(bClient.p1);
 		pM = new Thread(bClient.p2);
 		mH = new Thread(msgHandler);
-		startRemoteGame();
+		connect(ip, port);
 	}
 	
 	public MultiplayerGame(int hostPort) {
@@ -75,7 +75,7 @@ public class MultiplayerGame implements Screen {
 		pC = new Thread(bClient.p1);
 		pM = new Thread(bClient.p2);
 		mH = new Thread(msgHandler);
-		startRemoteGame();
+		host(hostPort);
 	}
 	
 	public void startRemoteGame(){
@@ -106,7 +106,7 @@ public class MultiplayerGame implements Screen {
             msg = Connection.createMsg(msgHeader, intMsgBody);
             connection.sendMsg(msg);
             System.out.println("Sent Max Score!");
-            //screens = Screens.MULTIGAME;
+            startRemoteGame();
         }
         catch (UnknownHostException ex){
             Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ex);
@@ -124,7 +124,7 @@ public class MultiplayerGame implements Screen {
             System.out.println("Initialized Client, sending variables...");
             sendVarsToServer(1, 2, 3);
             System.out.println("Sent variables!");
-            //screens = Screens.MULTIGAME;
+            startRemoteGame();
         }
         catch (Exception e) {
             Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, e);

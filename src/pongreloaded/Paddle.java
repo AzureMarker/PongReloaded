@@ -137,7 +137,7 @@ public class Paddle implements Runnable {
             paddle.y = 25;
         if(paddle.y >= 250)
             paddle.y = 250;
-        if(this.id == 2 && players == 1){
+        if(this.id == 2 && players == 1) {
             collision();
             if(((LocalGame) screen).getBallY() < paddle.y+25)
                 setYDirection(-1);

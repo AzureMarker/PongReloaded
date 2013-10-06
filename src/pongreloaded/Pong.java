@@ -44,11 +44,19 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     Screen screen;
     Screens screens;
     
+    // FPS
+    private long now;
+    private long framesTimer = 0;
+    private long beforeTime;
+    private int framesCount = 0;
+    private int framesCountAvg = 0;
+    
     // Flags
     static boolean quit = false;
     static boolean retro = false;
     static boolean disposeMainMenu = false;
     static boolean isFinished = false;
+    static boolean showFPS = false;
     static int winID;
     
     // Variables for Screen Size
@@ -58,7 +66,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     Dimension screenSize = new Dimension(GWIDTH, GHEIGHT);
     
     // Create Constructor to Spawn Window
-    public Pong(){
+    public Pong(String[] args){
         this.setTitle("Pong Reloaded");
         this.setSize(screenSize);
         this.setResizable(false);
@@ -80,12 +88,20 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         ipText.setVisible(false);
         hostPortText.setVisible(false);
         connectPortText.setVisible(false);
+        for(String s : args)
+    		System.out.println("Arguments: " + s);
+        if(args.length > 0) {
+        	if(args[0].equals("-fps")) {
+        		System.out.println("FPS mode activated");
+        		showFPS = true;
+        	}
+        }
         this.setVisible(true);
         screen = new MainMenu(GWIDTH, GHEIGHT);
     }
     
     public static void main(String[] args){
-        p = new Pong();
+        p = new Pong(args);
     }
     
     public static void setBackgroundColor(Color color) {
@@ -135,11 +151,11 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     public void draw(Graphics g){
         super.paint(g);
         screen.displayOutput(g);
-        evaluateFlags();
+        evaluateFlags(g);
         repaint();
     }
     
-    public void evaluateFlags() {
+    public void evaluateFlags(Graphics g) {
     	if(screen.getScreenType() == Screens.MULTIMENU) {
         	ipText.setVisible(true);
         	connectPortText.setVisible(true);
@@ -162,6 +178,18 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         if(isFinished == true) {
         	screen = new FinishScreen(winID);
         	isFinished = false;
+        }
+        
+        if(showFPS == true) {
+        	beforeTime = System.nanoTime();
+        	now = System.currentTimeMillis();
+        	g.drawString(""+framesCountAvg, 190, 280);
+        	framesCount++;
+        	if(now - framesTimer > 1000) {
+        		framesTimer = now;
+        		framesCountAvg = framesCount;
+        		framesCount = 0;
+        	}
         }
     }
 }
