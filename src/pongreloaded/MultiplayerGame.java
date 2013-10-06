@@ -156,7 +156,7 @@ public class MultiplayerGame implements Screen {
         else
             msgBody[5] = score;
         msg = Connection.createMsg(msgHeader, msgBody);
-        try{
+        try {
         	connection.sendMsg(msg);
         }
         catch(NullPointerException npe) {

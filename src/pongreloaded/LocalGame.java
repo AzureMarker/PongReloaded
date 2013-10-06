@@ -34,26 +34,23 @@ public class LocalGame implements Screen {
     int GWIDTH;
     int GHEIGHT;
     
-    public LocalGame(int GWIDTH, int GHEIGHT, int ballDiff, int p2Diff, int players, int mode, int winScore, int ballX, int ballY, int xDir, int yDir, int p1Score, int p2Score) {
+    public LocalGame(int GWIDTH, int GHEIGHT, int ballDiff, int p2Diff, int players, int mode, int winScore, int ballX, int ballY, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score) {
     	this.GWIDTH = GWIDTH;
     	this.GHEIGHT = GHEIGHT;
     	this.winScore = winScore;
-    	b = new Ball(ballX, ballY, true, this);
-    	ball = new Thread(b);
-    	p1 = new Thread(b.p1);
-    	p2 = new Thread(b.p2);
+    	b = new Ball(ballX, ballY, p1Y, p2Y, xDir, yDir, p1Score, p2Score, this);
     	b.setDifficulty(ballDiff);
     	b.p2.setDifficulty(p2Diff);
     	b.p2.setPlayers(players);
     	b.p1.setMode(mode);
     	b.p2.setMode(mode);
     	b.setWinScore(winScore);
-    	b.x = ballX;
-    	b.y = ballY;
-    	b.setXDirection(xDir);
-    	b.setYDirection(yDir);
     	b.p1Score = p1Score;
     	b.p2Score = p2Score;
+    	ball = new Thread(b);
+    	p1 = new Thread(b.p1);
+    	p2 = new Thread(b.p2);
+    	System.out.println("Starting Full LocalGame");
     	startLocalGame();
     }
     
@@ -70,6 +67,7 @@ public class LocalGame implements Screen {
     	b.p2.setPlayers(players);
     	b.p1.setMode(mode);
     	b.p2.setMode(mode);
+    	System.out.println("Starting First LocalGame");
     	startLocalGame();
     }
     
@@ -245,7 +243,7 @@ public class LocalGame implements Screen {
             	b.p1.stop();
             	b.p2.stop();
             	b.stop();
-                return new MainMenu(GWIDTH, GHEIGHT, b.difficulty, b.p2.difficulty, b.p2.players, b.p1.mode, b.winScore, b.x, b.y, b.xDirection, b.yDirection, b.p1Score, b.p2Score);
+                return new MainMenu(GWIDTH, GHEIGHT, b.difficulty, b.p2.difficulty, b.p2.players, b.p1.mode, b.winScore, b.getX(), b.getY(), b.p1.getY(), b.p2.getY(), b.xDirection, b.yDirection, b.p1Score, b.p2Score);
             }
 		}
 		else

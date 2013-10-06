@@ -40,6 +40,8 @@ public class MainMenu implements Screen {
     int winScore = 10;
     int ballX;
     int ballY;
+    int p1Y;
+    int p2Y;
     int xDir;
     int yDir;
     int p1Score;
@@ -49,7 +51,7 @@ public class MainMenu implements Screen {
     int GWIDTH;
     int GHEIGHT;
     
-    public MainMenu(int GWIDTH, int GHEIGHT, int ballDiff, int p2Diff, int players, int mode, int winScore, int ballX, int ballY, int xDir, int yDir, int p1Score, int p2Score) {
+    public MainMenu(int GWIDTH, int GHEIGHT, int ballDiff, int p2Diff, int players, int mode, int winScore, int ballX, int ballY, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score) {
     	this.GWIDTH = GWIDTH;
     	this.GHEIGHT = GHEIGHT;
     	this.ballDiff = ballDiff;
@@ -59,15 +61,21 @@ public class MainMenu implements Screen {
     	this.winScore = winScore;
     	this.ballX = ballX;
     	this.ballY = ballY;
+    	this.p1Y = p1Y;
+    	this.p2Y = p2Y;
     	this.xDir = xDir;
     	this.yDir = yDir;
+    	this.p1Score = p1Score;
+    	this.p2Score = p2Score;
     	isFirstRun = false;
+    	System.out.println("MainMenu Full Constructor");
     }
     
     public MainMenu(int GWIDTH, int GHEIGHT) {
     	this.GWIDTH = GWIDTH;
     	this.GHEIGHT = GHEIGHT;
     	isFirstRun = true;
+    	System.out.println("MainMenu First Run");
     }
 	
     public Screens getScreenType() {
@@ -240,10 +248,14 @@ public class MainMenu implements Screen {
         
         // Check if Start Button was pressed
 	    if(mx > startButton.x && mx < startButton.x+startButton.width && my > startButton.y && my < startButton.y+startButton.height) {
-	        if(isFirstRun == true)
+	        if(isFirstRun == true) {
+	        	System.out.println("First LocalGame");
 	        	return new LocalGame(GWIDTH, GHEIGHT, ballDiff, p2Diff, players, mode, winScore);
-	        else
-	        	return new LocalGame(GWIDTH, GHEIGHT, ballDiff, p2Diff, players, mode, winScore, ballX, ballY, xDir, yDir, p1Score, p2Score);
+	        }
+	        else {
+	        	System.out.println("Full LocalGame");
+	        	return new LocalGame(GWIDTH, GHEIGHT, ballDiff, p2Diff, players, mode, winScore, ballX, ballY, p1Y, p2Y, xDir, yDir, p1Score, p2Score);
+	        }
 	    }
 	    
 	    // Check if Score Button was pressed

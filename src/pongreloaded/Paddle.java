@@ -190,6 +190,10 @@ public class Paddle implements Runnable {
         }
     }
     
+    public int getY() {
+    	return paddle.y;
+    }
+    
     public void setDifficulty(int diff){
         difficulty = diff;
     }

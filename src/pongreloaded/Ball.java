@@ -78,6 +78,22 @@ public class Ball implements Runnable {
         }
     }
     
+    public Ball(int x, int y, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score, LocalGame LGscreen){
+        this.x = x;
+        this.y = y;
+        this.p1Score = p1Score;
+        this.p2Score = p2Score;
+        
+        setXDirection(xDir);
+        setYDirection(yDir);
+        
+        // Create the Ball
+        ball = new Rectangle(x, y, 7, 7);
+        
+        p1 = new Paddle(15, p1Y, 1, LGscreen);
+        p2 = new Paddle(370, p2Y, 2, LGscreen);
+    }
+    
     public void setXDirection(int xdir){
         xDirection = xdir;
     }
@@ -116,6 +132,10 @@ public class Ball implements Runnable {
             setYDirection(+1);
         if(ball.y >= 285)
             setYDirection(-1);
+    }
+    
+    public int getX() {
+    	return ball.x;
     }
     
     public int getY(){
