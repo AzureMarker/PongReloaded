@@ -119,7 +119,7 @@ public class MainMenu implements Screen {
         g.fillRect(diffButton.x, diffButton.y-5, diffButton.width, diffButton.height);
         g.setColor(Color.GRAY);
         g.drawString("Difficulty:", diffButton.x+7, diffButton.y+12);
-        switch(difficulty){
+        switch(difficulty) {
             case 1:
                 g.drawString("Easy", diffButton.x+63, diffButton.y+12);
                 break;
@@ -139,7 +139,7 @@ public class MainMenu implements Screen {
         g.fillRect(playersButton.x, playersButton.y-5, playersButton.width, playersButton.height);
         g.setColor(Color.GRAY);
         g.drawString("Players:", playersButton.x+8, playersButton.y+12);
-        switch(players){
+        switch(players) {
             case 1:
                 g.drawString("Single", playersButton.x+58, playersButton.y+12);
                 break;
@@ -156,7 +156,7 @@ public class MainMenu implements Screen {
         g.fillRect(modeButton.x, modeButton.y, modeButton.width, modeButton.height);
         g.setColor(Color.GRAY);
         g.drawString("Mode:", modeButton.x+5, modeButton.y+17);
-        switch(mode){
+        switch(mode) {
             case 1:
                 g.drawString("Original", modeButton.x+45, modeButton.y+17);
                 break;
@@ -263,7 +263,7 @@ public class MainMenu implements Screen {
 	    
 	    // Check if Difficulty Button was pressed
 	    if(mx > diffButton.x && mx < diffButton.x+diffButton.width && my > diffButton.y && my < diffButton.y+diffButton.height) {
-	        switch(difficulty){
+	        switch(difficulty) {
 	            case 1:
 	                ballDiff = 4;
 	                if(players == 1)
@@ -287,7 +287,7 @@ public class MainMenu implements Screen {
 	    
 	    // Check if Players Button was pressed
 	    if(mx > playersButton.x && mx < playersButton.x+playersButton.width && my > playersButton.y && my < playersButton.y+playersButton.height) {
-	        switch(players){
+	        switch(players) {
 	            case 1:
 	                players = 2;
 	                break;
@@ -299,7 +299,7 @@ public class MainMenu implements Screen {
 	    
 	    // Check if Mode Button was pressed
 	    if(mx > modeButton.x && mx < modeButton.x+modeButton.width && my > modeButton.y && my < modeButton.y+modeButton.height) {
-	        switch(mode){
+	        switch(mode) {
 	            case 1:
 	                mode = 2;
 	                Pong.retro = false;
@@ -330,7 +330,7 @@ public class MainMenu implements Screen {
         int mwDir = mouseWheel.getWheelRotation();
 		
 	    // Check if just Scrolled Over Score Button
-        if(mx > scoreButton.x && mx < scoreButton.x+scoreButton.width && my > scoreButton.y && my < scoreButton.y+scoreButton.height){
+        if(mx > scoreButton.x && mx < scoreButton.x+scoreButton.width && my > scoreButton.y && my < scoreButton.y+scoreButton.height) {
             if(mwDir < 0)
                 winScore++;
             else

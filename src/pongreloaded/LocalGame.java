@@ -71,21 +71,21 @@ public class LocalGame implements Screen {
     	startLocalGame();
     }
     
-    public boolean isFinished(){
-        if(b.p1Score >= winScore){
+    public boolean isFinished() {
+        if(b.p1Score >= winScore) {
             return true;
         }
-        if(b.p2Score >= winScore){
+        if(b.p2Score >= winScore) {
             return true;
         }
         return false;
     }
     
     public int getWinner() {
-    	if(b.p1Score >= winScore){
+    	if(b.p1Score >= winScore) {
             return 1;
         }
-        if(b.p2Score >= winScore){
+        if(b.p2Score >= winScore) {
             return 2;
         }
         return 0;
@@ -95,7 +95,7 @@ public class LocalGame implements Screen {
     	return b.getY();
     }
     
-	public void startLocalGame(){
+	public void startLocalGame() {
         ball.start();
         p1.start();
         p2.start();
@@ -189,7 +189,7 @@ public class LocalGame implements Screen {
         try{
             menuKeyHandler(key);
         }
-        catch(InterruptedException ie){
+        catch(InterruptedException ie) {
             System.out.println("Error: " + ie.getMessage());
         }
         return this;
@@ -233,7 +233,7 @@ public class LocalGame implements Screen {
                 try{
                     switchLocalPause();
                 }
-                catch(InterruptedException ie){
+                catch(InterruptedException ie) {
                     System.out.println("Error: " + ie.getMessage());
                 }
             }

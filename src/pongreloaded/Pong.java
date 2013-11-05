@@ -67,7 +67,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     Dimension screenSize = new Dimension(GWIDTH, GHEIGHT);
     
     // Create Constructor to Spawn Window
-    public Pong(String[] args){
+    public Pong(String[] args) {
         this.setTitle("Pong Reloaded");
         this.setSize(screenSize);
         this.setResizable(false);
@@ -101,7 +101,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         screen = new MainMenu(GWIDTH, GHEIGHT);
     }
     
-    public static void main(String[] args){
+    public static void main(String[] args) {
         p = new Pong(args);
     }
     
@@ -138,14 +138,14 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     }
     
     @Override
-    public void paint(Graphics g){
+    public void paint(Graphics g) {
         dbImage = createImage(getWidth(), getHeight());
         dbg = dbImage.getGraphics();
         draw(dbg);
         g.drawImage(dbImage, 0, 0, this);
     }
     
-    public void draw(Graphics g){
+    public void draw(Graphics g) {
         super.paint(g);
         screen.displayOutput(g);
         evaluateFlags(g);
@@ -156,7 +156,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     	if(screen.getScreenType() == Screens.MULTIMENU) {
         	ipText.setVisible(true);
         	connectPortText.setVisible(true);
-        	hostPortText.setVisible(true);
+        	//hostPortText.setVisible(true);
         }
         else {
         	ipText.setVisible(false);

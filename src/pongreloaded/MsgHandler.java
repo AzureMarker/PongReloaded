@@ -1,8 +1,5 @@
 package pongreloaded;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.net.p2p.*;
 
 /**
@@ -22,39 +19,29 @@ public class MsgHandler implements Runnable {
     
     public void getVariables(Connection conn, Msg msg) {
     	screen.arrayXY = (int[]) msg.getContent();
-        screen.bClient.p2.x = screen.arrayXY[0];
-        screen.bClient.p2.y = screen.arrayXY[1];
-        screen.bClient.x = screen.arrayXY[2];
-        screen.bClient.y = screen.arrayXY[3];
-        screen.bClient.p1Score = screen.arrayXY[4];
-        screen.bClient.p2Score = screen.arrayXY[5];
+        screen.bClient.p1.x = screen.arrayXY[0];
+        screen.bClient.p1.y = screen.arrayXY[1];
+        screen.bClient.p2.x = screen.arrayXY[2];
+        screen.bClient.p2.y = screen.arrayXY[3];
+        screen.bClient.x = screen.arrayXY[4];
+        screen.bClient.y = screen.arrayXY[5];
+        screen.bClient.p1Score = screen.arrayXY[6];
+        screen.bClient.p2Score = screen.arrayXY[7];
         System.out.println(
-        		""+screen.arrayXY[0] + "\n" +
-        		""+screen.arrayXY[1] + "\n" +
-        		""+screen.arrayXY[2] + "\n" +
-        		""+screen.arrayXY[3] + "\n" +
-        		""+screen.arrayXY[4] + "\n" +
-        		""+screen.arrayXY[5]);
+        		"p1 x: "+screen.arrayXY[0] + "\n" +
+        		"p1 y: "+screen.arrayXY[1] + "\n" +
+        		"p2 x: "+screen.arrayXY[2] + "\n" +
+        		"p2 y: "+screen.arrayXY[3] + "\n" +
+        		"b x: "+screen.arrayXY[4] + "\n" +
+        		"b y: "+screen.arrayXY[5] + "\n" +
+        		"p1Score: "+screen.arrayXY[6] + "\n" +
+        		"p2Score: "+screen.arrayXY[7]);
     }
     
     public void getNBVariables(Connection conn, Msg msg) {
     	screen.arrayXY = (int[]) msg.getContent();
-        screen.bClient.p1.x = screen.arrayXY[0];
-        screen.bClient.p1.y = screen.arrayXY[1];
-        screen.bClient.p1Score = screen.arrayXY[4];
-        screen.bClient.p2Score = screen.arrayXY[5];
-        System.out.println(
-        		""+screen.arrayXY[0] + "\n" +
-        		""+screen.arrayXY[1] + "\n" +
-        		""+screen.arrayXY[2] + "\n" +
-        		""+screen.arrayXY[3] + "\n" +
-        		""+screen.arrayXY[4] + "\n" +
-        		""+screen.arrayXY[5]);
-    }
-    
-    @SuppressWarnings("static-access")
-	public void setMaxScore(Connection conn, Msg msg) {
-        screen.setWinScore(Integer.parseInt(msg.getContent().toString()));
+        screen.bClient.winScore = screen.arrayXY[0];
+        System.out.println("winScore: "+screen.arrayXY[0]);
     }
     
     public void close() {
@@ -63,14 +50,6 @@ public class MsgHandler implements Runnable {
     
     @Override
     public void run() {
-        while(isRunning) {
-            try {
-                tick();
-                Thread.sleep(50);
-            }
-            catch(InterruptedException ex) {
-                Logger.getLogger(MsgHandler.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        while(isRunning) { }
     }
 }

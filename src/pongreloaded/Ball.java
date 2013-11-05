@@ -28,7 +28,7 @@ public class Ball implements Runnable {
     // Ball Object
     Rectangle ball;
     
-    public Ball(int x, int y, boolean paddles, LocalGame LGscreen){
+    public Ball(int x, int y, boolean paddles, LocalGame LGscreen) {
         p1Score = p2Score = 0;
         this.x = x;
         this.y = y;
@@ -47,13 +47,13 @@ public class Ball implements Runnable {
         // Create the Ball
         ball = new Rectangle(this.x, this.y, 7, 7);
         
-        if(paddles){
+        if(paddles) {
             p1 = new Paddle(15, 140, 1, LGscreen);
             p2 = new Paddle(370, 140, 2, LGscreen);
         }
     }
     
-    public Ball(int x, int y, boolean paddles, MultiplayerGame MGscreen){
+    public Ball(int x, int y, boolean paddles, MultiplayerGame MGscreen) {
         p1Score = p2Score = 0;
         this.x = x;
         this.y = y;
@@ -72,13 +72,13 @@ public class Ball implements Runnable {
         // Create 'ball'
         ball = new Rectangle(this.x, this.y, 7, 7);
         
-        if(paddles){
+        if(paddles) {
             p1 = new Paddle(15, 140, 1, MGscreen);
             p2 = new Paddle(370, 140, 2, MGscreen);
         }
     }
     
-    public Ball(int x, int y, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score, LocalGame LGscreen){
+    public Ball(int x, int y, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score, LocalGame LGscreen) {
         this.x = x;
         this.y = y;
         this.p1Score = p1Score;
@@ -94,37 +94,37 @@ public class Ball implements Runnable {
         p2 = new Paddle(370, p2Y, 2, LGscreen);
     }
     
-    public void setXDirection(int xdir){
+    public void setXDirection(int xdir) {
         xDirection = xdir;
     }
-    public void setYDirection(int ydir){
+    public void setYDirection(int ydir) {
         yDirection = ydir;
     }
     
-    public void draw(Graphics g){
+    public void draw(Graphics g) {
         g.setColor(Color.WHITE);
         g.fillRect(ball.x, ball.y, ball.width, ball.height);
     }
     
-    public void collision(){
-        if(ball.intersects(p1.paddle)){
+    public void collision() {
+        if(ball.intersects(p1.paddle)) {
             setXDirection(+1);
         }
-        if(ball.intersects(p2.paddle)){
+        if(ball.intersects(p2.paddle)) {
             setXDirection(-1);
         }
     }
     
-    public void move(){
+    public void move() {
         collision();
         ball.x += xDirection;
         ball.y += yDirection;
         //Bounce the Ball When the Edge is Detected
-        if(ball.x <= 0){
+        if(ball.x <= 0) {
             setXDirection(+1);
             p2Score++;
         }
-        if(ball.x >= 385){
+        if(ball.x >= 385) {
             setXDirection(-1);
             p1Score++;
         }
@@ -138,15 +138,15 @@ public class Ball implements Runnable {
     	return ball.x;
     }
     
-    public int getY(){
+    public int getY() {
         return ball.y;
     }
     
-    public void setDifficulty(int diff){
+    public void setDifficulty(int diff) {
         difficulty = diff;
     }
     
-    public void setWinScore(int score){
+    public void setWinScore(int score) {
         this.winScore = score;
     }
     
@@ -160,16 +160,16 @@ public class Ball implements Runnable {
     }
     
     @Override
-    public void run(){
+    public void run() {
         try{
         	while(stop == false) {
-        		while(isPaused == false){
+        		while(isPaused == false) {
         			move();
     				Thread.sleep(difficulty);
         		}
         	}
         }
-        catch(Exception e){
+        catch(Exception e) {
             System.err.println(e.getMessage());
         }
     }

@@ -28,7 +28,7 @@ public class MultiplayerGame implements Screen {
     int port;
     int hostPort;
     static String msgHeader;
-    static int[] msgBody = new int[6];
+    static int[] msgBody = new int[8];
     static int intMsgBody;
     org.net.Msg.Msg msg;
     MsgHandler msgHandler;
@@ -38,7 +38,7 @@ public class MultiplayerGame implements Screen {
     int character;
     int pHX = 0;
     int pHY = 0;
-    int[] arrayXY = new int[6];
+    int[] arrayXY = new int[8];
     char[] com = new char[3];
     boolean clientRun = true;
     boolean first = true;
@@ -75,19 +75,18 @@ public class MultiplayerGame implements Screen {
 		pC = new Thread(bClient.p1);
 		pM = new Thread(bClient.p2);
 		mH = new Thread(msgHandler);
-		host(hostPort);
+		host();
 	}
 	
-	public void startRemoteGame(){
+	public void startRemoteGame() {
         bC.start();
         pC.start();
         
         // Send Variables to Player
-        if(isHost)
-            sendVarsToServer(bClient.p1.x, bClient.p1.y, bClient.p1Score, bClient.x, bClient.y);
+        sendVarsToServer();
     }
 	
-	public void host(int port){
+	public void host() {
         System.out.println("Server Initializing...");
         try {
             mH.start();
@@ -97,7 +96,7 @@ public class MultiplayerGame implements Screen {
             connection = jnm.connect(InetAddress.getLocalHost().getHostAddress().toString());
             System.out.println("Initialized Server, recieving variables...");
             bClient.x = 100;
-            while(bClient.x != 1){
+            while(bClient.x != 1) {
                 
             }
             System.out.println("Recieved variables! Sending Max Score...");
@@ -108,12 +107,12 @@ public class MultiplayerGame implements Screen {
             System.out.println("Sent Max Score!");
             startRemoteGame();
         }
-        catch (UnknownHostException ex){
+        catch (UnknownHostException ex) {
             Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    public void connect(String ip, int port){
+    public void connect(String ip, int port) {
         System.out.println("Client Initializing...");
         try{
             mH.start();
@@ -122,7 +121,8 @@ public class MultiplayerGame implements Screen {
             jnm = new jnmp2p(prot, port);
             connection = jnm.connect(ip);
             System.out.println("Initialized Client, sending variables...");
-            sendVarsToServer(1, 2, 3);
+            sendNBVarsToServer();
+            sendVarsToServer();
             System.out.println("Sent variables!");
             startRemoteGame();
         }
@@ -131,46 +131,33 @@ public class MultiplayerGame implements Screen {
         }
     }
     
-    public void sendVarsToServer(int x, int y, int score, int bx, int by){
+    public void sendVarsToServer() {
         msgHeader = "getVars";
-        msgBody[0] = x;
-        msgBody[1] = y;
-        msgBody[2] = bx;
-        msgBody[3] = by;
-        if(isHost)
-            msgBody[4] = score;
-        else
-            msgBody[5] = score;
+        msgBody[0] = bClient.p1.x;
+        msgBody[1] = bClient.p1.y;
+        msgBody[2] = bClient.p2.x;
+        msgBody[3] = bClient.p2.y;
+        msgBody[4] = bClient.x;
+        msgBody[5] = bClient.y;
+        msgBody[6] = bClient.p1Score;
+        msgBody[7] = bClient.p2Score;
         msg = Connection.createMsg(msgHeader, msgBody);
         connection.sendMsg(msg);
     }
     
-    public void sendVarsToServer(int x, int y, int score){
+    public void sendNBVarsToServer() {
         msgHeader = "getNBVars";
-        msgBody[0] = x;
-        msgBody[1] = y;
-        msgBody[2] = 0;
-        msgBody[3] = 0;
-        if(isHost)
-            msgBody[4] = score;
-        else
-            msgBody[5] = score;
+        msgBody[0] = winScore;
         msg = Connection.createMsg(msgHeader, msgBody);
-        try {
-        	connection.sendMsg(msg);
-        }
-        catch(NullPointerException npe) {
-        	System.out.println("Could not find server!");
-        }
+        connection.sendMsg(msg);
     }
     
-    public void addMsgHandlers(){
+    public void addMsgHandlers() {
         prot.addMsgHandler("getVars", "getVariables");
         prot.addMsgHandler("getNBVars", "getNBVariables");
-        prot.addMsgHandler("setMaxScore", "SetMaxScore");
     }
     
-    public void closeConnection(){
+    public void closeConnection() {
             System.out.println("Closing connection...");
             jnmp2p.close(connection);
             System.out.println("Connection closed.");
@@ -192,10 +179,7 @@ public class MultiplayerGame implements Screen {
         g.drawString(""+bClient.p2Score, 370, 50);
         
         // Send Variables to Server
-        if(isHost)
-        	sendVarsToServer(bClient.p1.x, bClient.p1.y, bClient.p1Score, bClient.x, bClient.y);
-        else
-        	sendVarsToServer(bClient.p2.x, bClient.p2.y, bClient.p2Score);
+        sendVarsToServer();
 	}
 	
 	public Screens getScreenType() {
@@ -203,11 +187,15 @@ public class MultiplayerGame implements Screen {
 	}
 	
 	public Screen respondToUserInput(KeyEvent key) {
-		return null;
+		bClient.p1.keyPressed(key);
+        bClient.p2.keyPressed(key);
+        return this;
 	}
 	
 	public Screen respondToUserInputReleased(KeyEvent key) {
-		return this;
+		bClient.p1.keyPressed(key);
+        bClient.p2.keyPressed(key);
+        return this;
 	}
 	
 	public Screen respondToUserInputHover(MouseEvent mouse) {
