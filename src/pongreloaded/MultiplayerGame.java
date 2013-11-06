@@ -193,8 +193,8 @@ public class MultiplayerGame implements Screen {
 	}
 	
 	public Screen respondToUserInputReleased(KeyEvent key) {
-		bClient.p1.keyPressed(key);
-        bClient.p2.keyPressed(key);
+		bClient.p1.keyReleased(key);
+        bClient.p2.keyReleased(key);
         return this;
 	}
 	
