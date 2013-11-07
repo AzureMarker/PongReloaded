@@ -13,6 +13,8 @@ public interface Screen {
     
     public Screens getScreenType();
     
+    public Screen getScreen();
+    
     public Screen respondToUserInput(KeyEvent key);
     
     public Screen respondToUserInputReleased(KeyEvent key);

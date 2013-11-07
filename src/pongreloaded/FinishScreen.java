@@ -53,6 +53,10 @@ public class FinishScreen implements Screen {
 		return Screens.FINSIH;
 	}
 	
+	public Screen getScreen() {
+		return this;
+	}
+	
 	public Screen respondToUserInput(KeyEvent key) {
 		return this;
 	}

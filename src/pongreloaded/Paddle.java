@@ -139,10 +139,22 @@ public class Paddle implements Runnable {
             paddle.y = 250;
         if(this.id == 2 && players == 1) {
             collision();
-            if(((LocalGame) screen).getBallY() < paddle.y+25)
-                setYDirection(-1);
-            if(((LocalGame) screen).getBallY() > paddle.y+25) {
-                setYDirection(+1);
+            switch(screen.getScreenType()) {
+            	case LOCALGAME:
+            		if(((LocalGame) screen).getBallY() < paddle.y+25)
+                        setYDirection(-1);
+                    if(((LocalGame) screen).getBallY() > paddle.y+25)
+                        setYDirection(+1);
+            		break;
+            	case MULTIGAME:
+            		if(((MultiplayerGame) screen).getBallY() < paddle.y+25)
+                        setYDirection(-1);
+                    if(((MultiplayerGame) screen).getBallY() > paddle.y+25)
+                        setYDirection(+1);
+            		break;
+            	default:
+            		System.out.println("Wrong Screen for Paddle 2");
+            		break;
             }
         }
     }

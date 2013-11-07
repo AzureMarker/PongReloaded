@@ -163,6 +163,10 @@ public class LocalGame implements Screen {
 			return Screens.LOCALGAME;
 	}
 	
+	public Screen getScreen() {
+		return this;
+	}
+	
 	public void menuKeyHandler(KeyEvent key) throws InterruptedException{
         if(key.getKeyCode() == KeyEvent.VK_ESCAPE)
             switchLocalPause();

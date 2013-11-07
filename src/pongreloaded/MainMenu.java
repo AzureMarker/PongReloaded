@@ -82,6 +82,10 @@ public class MainMenu implements Screen {
     	return Screens.MAINMENU;
     }
     
+    public Screen getScreen() {
+		return this;
+	}
+    
 	public void displayOutput(Graphics g) {
 		// Menu
         g.setFont(new Font("Arial", Font.BOLD, 26));

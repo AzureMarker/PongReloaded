@@ -41,7 +41,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     // Game
     @SuppressWarnings("unused")
 	private static Pong p;
-    Screen screen;
+    static Screen screen;
     Screens screens;
     
     // FPS

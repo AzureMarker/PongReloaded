@@ -36,6 +36,10 @@ public class MultiplayerMenu implements Screen {
 		return Screens.MULTIMENU;
 	}
 	
+	public Screen getScreen() {
+		return this;
+	}
+	
 	public void displayOutput(Graphics g) {
 		// Multiplayer Header
         g.setFont(new Font("Arial", Font.BOLD, 26));
