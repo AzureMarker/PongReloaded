@@ -73,8 +73,8 @@ public class Ball implements Runnable {
         ball = new Rectangle(this.x, this.y, 7, 7);
         
         if(paddles) {
-            p1 = new Paddle(15, 140, 1, MGscreen);
-            p2 = new Paddle(370, 140, 2, MGscreen);
+            p1 = new Paddle(15, 140, 3, MGscreen);
+            p2 = new Paddle(370, 140, 4, MGscreen);
         }
     }
     
@@ -171,6 +171,7 @@ public class Ball implements Runnable {
         }
         catch(Exception e) {
             System.err.println(e.getMessage());
+            System.exit(-1);
         }
     }
 }

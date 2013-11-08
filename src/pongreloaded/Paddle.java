@@ -12,6 +12,7 @@ public class Paddle implements Runnable {
     // Global Variables
     volatile boolean isPaused = false;
     volatile boolean stop = false;
+    boolean isHost;
     int x, y, yDirection, id;
     Screen screen;
     
@@ -40,6 +41,7 @@ public class Paddle implements Runnable {
         this.y = y;
         this.id = id;
         this.screen = screen;
+        isHost = screen.isHost;
         paddle = new Rectangle(x, y, 10, 50);
     }
     
@@ -69,20 +71,24 @@ public class Paddle implements Runnable {
                 }
                 break;
             case 3:
-                if(e.getKeyCode() == KeyEvent.VK_W) {
-                    setYDirection(-1);
-                }
-                if(e.getKeyCode() == KeyEvent.VK_S) {
-                    setYDirection(+1);
-                }
+            	if(isHost) {
+            		if(e.getKeyCode() == KeyEvent.VK_W) {
+                    	setYDirection(-1);
+                	}
+                	if(e.getKeyCode() == KeyEvent.VK_S) {
+                    	setYDirection(+1);
+                	}
+            	}
                 break;
             case 4:
-                if(e.getKeyCode() == KeyEvent.VK_W) {
-                    setYDirection(-1);
-                }
-                if(e.getKeyCode() == KeyEvent.VK_S) {
-                    setYDirection(+1);
-                }
+            	if(!isHost) {
+            		if(e.getKeyCode() == KeyEvent.VK_W) {
+                    	setYDirection(-1);
+                	}
+                	if(e.getKeyCode() == KeyEvent.VK_S) {
+                    	setYDirection(+1);
+                	}
+            	}
                 break;
         }
     }
@@ -109,20 +115,24 @@ public class Paddle implements Runnable {
                 }
                 break;
             case 3:
-                if(e.getKeyCode() == KeyEvent.VK_W) {
-                    setYDirection(0);
-                }
-                if(e.getKeyCode() == KeyEvent.VK_S) {
-                    setYDirection(0);
-                }
+            	if(isHost) {
+            		if(e.getKeyCode() == KeyEvent.VK_W) {
+            			setYDirection(0);
+            		}
+            		if(e.getKeyCode() == KeyEvent.VK_S) {
+            			setYDirection(0);
+            		}
+            	}
                 break;
             case 4:
-                if(e.getKeyCode() == KeyEvent.VK_W) {
-                    setYDirection(0);
-                }
-                if(e.getKeyCode() == KeyEvent.VK_S) {
-                    setYDirection(0);
-                }
+            	if(!isHost) {
+            		if(e.getKeyCode() == KeyEvent.VK_W) {
+                    	setYDirection(0);
+                	}
+                	if(e.getKeyCode() == KeyEvent.VK_S) {
+                    	setYDirection(0);
+                	}
+            	}
                 break;
         }
     }
@@ -238,6 +248,7 @@ public class Paddle implements Runnable {
         }
         catch(Exception e) {
             System.err.println(e.getMessage());
+            System.exit(-1);
         }
     }
     

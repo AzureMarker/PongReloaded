@@ -25,11 +25,13 @@ public class MultiplayerMenu implements Screen {
     // Game
     int GWIDTH;
     int GHEIGHT;
+    int winScore;
     boolean isHost = false;
 	
-	public MultiplayerMenu(int GWIDTH, int GHEIGHT) {
+	public MultiplayerMenu(int GWIDTH, int GHEIGHT, int winScore) {
 		this.GWIDTH = GWIDTH;
 		this.GHEIGHT = GHEIGHT;
+		this.winScore = winScore;
 	}
 	
 	public Screens getScreenType() {
@@ -60,17 +62,17 @@ public class MultiplayerMenu implements Screen {
         g.drawString("Connect", connectButton.x+26, connectButton.y+17);
         
         // Host Port Input
-        //g.setColor(Color.WHITE);
-        //g.drawString("Enter Port Number", 250, 100);
+        g.setColor(Color.WHITE);
+        g.drawString("Enter Port Number", 250, 100);
         
         // Host Button
-        //if(!hostHover)
-        //    g.setColor(Color.CYAN);
-        //else
-        //    g.setColor(Color.PINK);
-        //g.fillRect(hostButton.x, hostButton.y, hostButton.width, hostButton.height);
-        //g.setColor(Color.GRAY);
-        //g.drawString("Host", hostButton.x+35, hostButton.y+17);
+        if(!hostHover)
+            g.setColor(Color.CYAN);
+        else
+            g.setColor(Color.PINK);
+        g.fillRect(hostButton.x, hostButton.y, hostButton.width, hostButton.height);
+        g.setColor(Color.GRAY);
+        g.drawString("Host", hostButton.x+35, hostButton.y+17);
         
         // Back Button (Multiplayer to Main)
         if(!multiToMainHover)
@@ -122,15 +124,19 @@ public class MultiplayerMenu implements Screen {
         // Check if just Pressed Connect Button
         if(mx > connectButton.x && mx < connectButton.x+connectButton.width && my > connectButton.y && my < connectButton.y+connectButton.height) {
             if(!isHost) {
-                return new MultiplayerGame(Pong.ipText.getText(), Integer.parseInt(Pong.connectPortText.getText()));
+                return new MultiplayerGame(Pong.ipText.getText(), Integer.parseInt(Pong.connectPortText.getText()), winScore);
             }
             else
                 Pong.ipText.setText("You are host");
         }
         
         // Check if just Pressed Host Button
-        //if(mx > hostButton.x && mx < hostButton.x+hostButton.width && my > hostButton.y && my < hostButton.y+hostButton.height)
-        //	return new MultiplayerGame(Integer.parseInt(Pong.hostPortText.getText()));
+        if(mx > hostButton.x && mx < hostButton.x+hostButton.width && my > hostButton.y && my < hostButton.y+hostButton.height) {
+        	if(Pong.hostPortText.getText().equals(""))
+        		System.out.println("Please enter a valid port");
+        	else
+        		return new MultiplayerGame(Integer.parseInt(Pong.hostPortText.getText()), winScore);
+        }
         
         // Check if just Pressed Multiplayer Menu To Main Button
         if(mx > multiToMainButton.x && mx < multiToMainButton.x+multiToMainButton.width && my > multiToMainButton.y && my < multiToMainButton.y+multiToMainButton.height)
