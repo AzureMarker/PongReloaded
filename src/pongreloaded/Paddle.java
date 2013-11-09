@@ -144,6 +144,10 @@ public class Paddle implements Runnable {
     	return yDirection;
     }
     
+    public void setPlayerNum(int playerNum) {
+    	this.playerNum = playerNum;
+    }
+    
     public void move() {
         paddle.y += yDirection;
         if(paddle.y <= 25)
