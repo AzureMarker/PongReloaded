@@ -24,13 +24,13 @@ public class MultiplayerGame implements Screen {
     String ip;
     String inLine;
     String outLine;
-    String[] inFormat = new String[8];
+    String[] inFormat = new String[10];
     int port;
     int hostPort;
     int playerNum = 3;
     int otherPlayerNum = 3;
-    int[] msgBody = new int[7];
-    int[] arrayXY = new int[7];
+    int[] msgBody = new int[9];
+    int[] arrayXY = new int[9];
     boolean isHost;
     ServerSocket server;
     Socket socket;
@@ -114,6 +114,7 @@ public class MultiplayerGame implements Screen {
 			System.out.println("Client connected, setting up I/O");
 			setUpIO();
 			getPlayerNumber();
+			socket.setSoTimeout(1000);
 			startRemoteGame();
 		}
         catch (IOException e) {
@@ -130,6 +131,7 @@ public class MultiplayerGame implements Screen {
 			System.out.println("Connected to Server, setting up I/O");
 			setUpIO();
 			getPlayerNumber();
+			socket.setSoTimeout(1000);
 	        startRemoteGame();
 		}
         catch (UnknownHostException e) {
@@ -170,13 +172,7 @@ public class MultiplayerGame implements Screen {
 		if(!isHost) {
 			System.out.println("Waiting for other player to choose number...");
 			while(otherPlayerNum != 0 && otherPlayerNum != 1) {
-				try {
-					Thread.sleep(10000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				System.out.println("Sending Vars, checking otherPlayerNum");
-				sendVarsToServer();
+				sendNBVarsToServer();
 			}
 		}
 		switch(playerNum) {
@@ -204,16 +200,10 @@ public class MultiplayerGame implements Screen {
 		if(isHost) {
 			System.out.println("Waiting for other player to choose number...");
 			while(otherPlayerNum != 0 && otherPlayerNum != 1) {
-				try {
-					Thread.sleep(10000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				System.out.println("Sending Vars, checking otherPlayerNum");
-				sendVarsToServer();
+				sendNBVarsToServer();
 			}
-			sendNBVarsToServer();
 		}
+		sendNBVarsToServer();
     }
     
     public void setUpIO() {
@@ -225,8 +215,8 @@ public class MultiplayerGame implements Screen {
 				
 				public void getVariables() {
 					if(isHost) {
-			    		bClient.p2.x = arrayXY[0];
-			    		bClient.p2.y = arrayXY[1];
+			    		bClient.p2.setY(arrayXY[0]);
+			    		bClient.p2.setYDirection(arrayXY[1]);
 			    		bClient.p2Score = arrayXY[2];
 			    		winScore = arrayXY[3];
 			            otherPlayerNum = arrayXY[4];
@@ -236,13 +226,15 @@ public class MultiplayerGame implements Screen {
 			            		"p2Score: " + arrayXY[2]);*/
 			    	}
 			    	else {
-			    		bClient.p1.x = arrayXY[0];
-			    		bClient.p1.y = arrayXY[1];
-			    		bClient.x = arrayXY[2];
-			    		bClient.y = arrayXY[3];
-			    		bClient.p1Score = arrayXY[4];
-			    		winScore = arrayXY[5];
-			            otherPlayerNum = arrayXY[6];
+			    		bClient.p1.setY(arrayXY[0]);
+			    		bClient.p1.setYDirection(arrayXY[1]);
+			    		bClient.setX(arrayXY[2]);
+			    		bClient.setY(arrayXY[3]);
+			    		bClient.setXDirection(arrayXY[4]);
+			    		bClient.setYDirection(arrayXY[5]);
+			    		bClient.p1Score = arrayXY[6];
+			    		winScore = arrayXY[7];
+			            otherPlayerNum = arrayXY[8];
 			            /*System.out.println(
 			            		"p1 x: " + arrayXY[0] + "\n" +
 			            		"p1 y: " + arrayXY[1] + "\n" +
@@ -253,11 +245,12 @@ public class MultiplayerGame implements Screen {
 				}
 				
 				public void getNBVariables() {
-			    	bClient.winScore = arrayXY[0];
+					if(!isHost)
+						bClient.winScore = arrayXY[0];
 			    	otherPlayerNum = arrayXY[1];
-			        System.out.println(
+			        /*System.out.println(
 			        		"winScore: " + arrayXY[0] + "\n" +
-			        		"Other Player Num: " + arrayXY[1]);
+			        		"Other Player Num: " + arrayXY[1]);*/
 			    }
 				
 				public void checkForPacket() {
@@ -266,11 +259,8 @@ public class MultiplayerGame implements Screen {
 							inLine = in.readLine();
 							inFormat = inLine.split(",");
 							inFormat[1] = inFormat[1].replace("[", "");
-							if(inFormat[0].equals("getNBVars"))
-								inFormat[2] = inFormat[2].replace("]", "");
-							else
-								inFormat[7] = inFormat[7].replace("]", "");
-							for(int i = 1; i < 8; i++) {
+							inFormat[9] = inFormat[9].replace("]", "");
+							for(int i = 1; i < 10; i++) {
 								arrayXY[i-1] = Integer.parseInt(inFormat[i].trim());
 							}
 							if(inFormat[0].equals("getVars"))
@@ -287,7 +277,7 @@ public class MultiplayerGame implements Screen {
 						System.exit(-1);
 					}
 					catch(Exception e) {
-						System.out.println("Exception! Could be OutOfBounds");
+						System.out.println("Exception! Could be OutOfBounds\nMessage ID: " + inFormat[0] + "\nMessage: " + inLine);
 						e.printStackTrace();
 						System.exit(-1);
 					}
@@ -315,17 +305,19 @@ public class MultiplayerGame implements Screen {
     
     public void sendVarsToServer() {
         if(isHost) {
-        	msgBody[0] = bClient.p1.x;
-        	msgBody[1] = bClient.p1.y;
-        	msgBody[2] = bClient.x;
-            msgBody[3] = bClient.y;
-            msgBody[4] = bClient.p1Score;
-            msgBody[5] = winScore;
-            msgBody[6] = playerNum;
+        	msgBody[0] = bClient.p1.getY();
+        	msgBody[1] = bClient.p1.getYDirection();
+        	msgBody[2] = bClient.getX();
+            msgBody[3] = bClient.getY();
+            msgBody[4] = bClient.getXDirection();
+            msgBody[5] = bClient.getYDirection();
+            msgBody[6] = bClient.p1Score;
+            msgBody[7] = winScore;
+            msgBody[8] = playerNum;
         }
         else {
-        	msgBody[0] = bClient.p2.x;
-        	msgBody[1] = bClient.p2.y;
+        	msgBody[0] = bClient.p2.getY();
+        	msgBody[1] = bClient.p2.getYDirection();
         	msgBody[2] = bClient.p2Score;
         	msgBody[3] = winScore;
             msgBody[4] = playerNum;
@@ -341,8 +333,9 @@ public class MultiplayerGame implements Screen {
     }
     
     public void sendNBVarsToServer() {
-        msgBody[0] = winScore;
-        msgBody[1] = playerNum;
+    	if(isHost)
+    		msgBody[0] = winScore;
+    	msgBody[1] = playerNum;
         try {
         	out.println("getNBVars," + Arrays.toString(msgBody));
         }

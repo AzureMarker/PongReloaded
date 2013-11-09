@@ -141,6 +141,10 @@ public class Paddle implements Runnable {
         yDirection = yDir;
     }
     
+    public int getYDirection() {
+    	return yDirection;
+    }
+    
     public void move() {
         paddle.y += yDirection;
         if(paddle.y <= 25)
@@ -210,6 +214,10 @@ public class Paddle implements Runnable {
                 g.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
                 break;
         }
+    }
+    
+    public void setY(int y) {
+    	this.y = y;
     }
     
     public int getY() {

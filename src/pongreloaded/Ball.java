@@ -97,8 +97,17 @@ public class Ball implements Runnable {
     public void setXDirection(int xdir) {
         xDirection = xdir;
     }
+    
     public void setYDirection(int ydir) {
         yDirection = ydir;
+    }
+    
+    public int getXDirection() {
+    	return xDirection;
+    }
+    
+    public int getYDirection() {
+    	return yDirection;
     }
     
     public void draw(Graphics g) {
@@ -132,6 +141,14 @@ public class Ball implements Runnable {
             setYDirection(+1);
         if(ball.y >= 285)
             setYDirection(-1);
+    }
+    
+    public void setX(int x) {
+    	this.x = x;
+    }
+    
+    public void setY(int y) {
+    	this.y = y;
     }
     
     public int getX() {
