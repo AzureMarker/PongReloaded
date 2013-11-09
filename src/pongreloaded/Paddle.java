@@ -70,11 +70,24 @@ public class Paddle implements Runnable {
                 }
                 break;
             case 3:
+            	if(playerNum == 0) {
+            		if(e.getKeyCode() == KeyEvent.VK_W) {
+                    	setYDirection(-1);
+                	}
+                	if(e.getKeyCode() == KeyEvent.VK_S) {
+                    	setYDirection(+1);
+                	}
+            	}
+                break;
             case 4:
-            	if(e.getKeyCode() == KeyEvent.VK_W)
-                    setYDirection(-1);
-                if(e.getKeyCode() == KeyEvent.VK_S)
-                    setYDirection(+1);
+            	if(playerNum == 1) {
+            		if(e.getKeyCode() == KeyEvent.VK_W) {
+                    	setYDirection(-1);
+                	}
+                	if(e.getKeyCode() == KeyEvent.VK_S) {
+                    	setYDirection(+1);
+                	}
+            	}
                 break;
         }
     }
@@ -101,11 +114,20 @@ public class Paddle implements Runnable {
                 }
                 break;
             case 3:
+            	if(playerNum == 0) {
+            		if(e.getKeyCode() == KeyEvent.VK_W)
+            			setYDirection(0);
+            		if(e.getKeyCode() == KeyEvent.VK_S)
+            			setYDirection(0);
+            	}
+                break;
             case 4:
-            	if(e.getKeyCode() == KeyEvent.VK_W)
-                    setYDirection(0);
-                if(e.getKeyCode() == KeyEvent.VK_S)
-                    setYDirection(0);
+            	if(playerNum == 1) {
+            		if(e.getKeyCode() == KeyEvent.VK_W)
+            			setYDirection(0);
+            		if(e.getKeyCode() == KeyEvent.VK_S)
+            			setYDirection(0);
+            	}
                 break;
         }
     }
