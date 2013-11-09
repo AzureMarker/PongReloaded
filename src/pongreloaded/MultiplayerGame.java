@@ -6,41 +6,38 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.io.BufferedReader;
-import java.net.InetAddress;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Arrays;
 
 import javax.swing.JOptionPane;
-
-import org.net.p2p.Connection;
-import org.net.p2p.Protocol;
-import org.net.p2p.jnmp2p;
 
 /**
  * @author Mcat12
  */
 public class MultiplayerGame implements Screen {
 	// Multiplayer Connection
-    jnmp2p jnm;
-    Connection connection;
-    Protocol prot;
-    BufferedReader in;
     String ip;
+    String inLine;
+    String outLine;
+    String[] inFormat = new String[10];
     int port;
     int hostPort;
-    static String msgHeader;
-    static int[] msgBody = new int[6];
-    static int intMsgBody;
-    org.net.Msg.Msg msg;
-    MsgHandler msgHandler;
-    
-    
-    // Client Variables
     int playerNum = 3;
     int otherPlayerNum = 3;
-    int[] arrayXY = new int[8];
-    String TimeStamp;
+    int[] msgBody = new int[9];
+    int[] arrayXY = new int[9];
+    boolean isHost;
+    ServerSocket server;
+    Socket socket;
+    MsgHandler msgHandler;
+    BufferedReader in;
+    PrintWriter out;
+    Runnable socketWork;
 	
 	// Game
 	Ball bClient;
@@ -50,10 +47,13 @@ public class MultiplayerGame implements Screen {
 	Thread bC;
     Thread pC;
     Thread pM;
+    Thread sW;
 	
-	public MultiplayerGame(String ip, int port) {
+	public MultiplayerGame(String ip, int port, int winScore) {
 		this.ip = ip;
 		this.port = port;
+		this.winScore = winScore;
+		isHost = false;
 		bClient = new Ball(193, 143, true, this);
 		bC = new Thread(bClient);
 		pC = new Thread(bClient.p1);
@@ -61,8 +61,10 @@ public class MultiplayerGame implements Screen {
 		connect(ip, port);
 	}
 	
-	public MultiplayerGame(int hostPort) {
+	public MultiplayerGame(int hostPort, int winScore) {
 		this.hostPort = hostPort;
+		this.winScore = winScore;
+		isHost = true;
 		bClient = new Ball(193, 143, true, this);
 		bC = new Thread(bClient);
 		pC = new Thread(bClient.p1);
@@ -71,15 +73,11 @@ public class MultiplayerGame implements Screen {
 	}
 	
 	public void startRemoteGame() {
-		System.out.println("Starting Ball Thread");
         bC.start();
-        System.out.println("Starting P1 Thread");
         pC.start();
-        System.out.println("Starting P2 Thread");
         pM.start();
         
         // Send Variables to Player
-        System.out.println("Sending variables again...");
         sendVarsToServer();
     }
 	
@@ -110,47 +108,42 @@ public class MultiplayerGame implements Screen {
 	public void host() {
         System.out.println("Server Initializing...");
         try {
-            //mH.start();
-            //prot = new Protocol(msgHandler);
-            addMsgHandlers();
-            jnm = new jnmp2p(prot, hostPort);
-            connection = jnm.connect(InetAddress.getLocalHost().getHostAddress().toString());
-            System.out.println("Initialized Server, recieving variables...");
-            bClient.x = 100;
-            while(bClient.x != 1) {
-                
-            }
-            System.out.println("Recieved variables! Sending Max Score...");
-            msgHeader = "setMaxScore";
-            intMsgBody = winScore;
-            msg = Connection.createMsg(msgHeader, intMsgBody);
-            connection.sendMsg(msg);
-            System.out.println("Sent Max Score!");
-            startRemoteGame();
-        }
-        catch (UnknownHostException ex) {
-            Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, ex);
-        }
+			server = new ServerSocket(hostPort);
+			System.out.println("Created Server, waiting for Client...");
+			socket = server.accept();
+			System.out.println("Client connected, setting up I/O");
+			setUpIO();
+			getPlayerNumber();
+			socket.setSoTimeout(1000);
+			startRemoteGame();
+		}
+        catch (IOException e) {
+        	System.out.println("Couldn't start server");
+			e.printStackTrace();
+			System.exit(-1);
+		}
     }
     
     public void connect(String ip, int port) {
         System.out.println("Client Initializing...");
-        try{
-        	msgHandler = new MsgHandler(this);
-            prot = new Protocol(msgHandler);
-            addMsgHandlers();
-            jnm = new jnmp2p(prot, port);
-            connection = jnm.connect(ip);
-            System.out.println("Initialized Client, enter Player number");
-            getPlayerNumber();
-            System.out.println("Sent numbers, waiting for other player...");
-            while(otherPlayerNum == 3) { }
-            System.out.println(otherPlayerNum);
-            startRemoteGame();
-        }
-        catch (Exception e) {
-            Logger.getLogger(Pong.class.getName()).log(Level.SEVERE, null, e);
-        }
+        try {
+			socket = new Socket(ip, port);
+			System.out.println("Connected to Server, setting up I/O");
+			setUpIO();
+			getPlayerNumber();
+			socket.setSoTimeout(1000);
+	        startRemoteGame();
+		}
+        catch (UnknownHostException e) {
+			System.out.println("Couldn't find host");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+        catch (IOException e) {
+			System.out.println("Couldn't connect to host, ioe");
+			e.printStackTrace();
+		}
+        
     }
     
     public void getPlayerNumber() {
@@ -158,14 +151,30 @@ public class MultiplayerGame implements Screen {
     			"Player 1",
     			"Player 2"
     	};
-		playerNum = JOptionPane.showOptionDialog(null,
-				"What Player are you?",
-				"Pong Reloaded - Enter Player Number",
-				JOptionPane.DEFAULT_OPTION,
-				JOptionPane.QUESTION_MESSAGE,
-				null,
-				options,
-				options[0]);
+    	if(isHost)
+    		playerNum = JOptionPane.showOptionDialog(null,
+    				"What Player are you?",
+    				"Host - Enter Player Number",
+    				JOptionPane.DEFAULT_OPTION,
+    				JOptionPane.QUESTION_MESSAGE,
+    				null,
+    				options,
+    				options[0]);
+    	else
+    		playerNum = JOptionPane.showOptionDialog(null,
+    				"What Player are you?",
+    				"Client - Enter Player Number",
+    				JOptionPane.DEFAULT_OPTION,
+    				JOptionPane.QUESTION_MESSAGE,
+    				null,
+    				options,
+    				options[0]);
+		if(!isHost) {
+			System.out.println("Waiting for other player to choose number...");
+			while(otherPlayerNum != 0 && otherPlayerNum != 1) {
+				sendNBVarsToServer();
+			}
+		}
 		switch(playerNum) {
 			case 0:
 				if(otherPlayerNum != 0)
@@ -185,101 +194,169 @@ public class MultiplayerGame implements Screen {
 				}
 				break;
 		}
+		System.out.println("Got number, sending to server");
+		sendVarsToServer();
+		System.out.println("Sent number, waiting for player...");
+		if(isHost) {
+			System.out.println("Waiting for other player to choose number...");
+			while(otherPlayerNum != 0 && otherPlayerNum != 1) {
+				sendNBVarsToServer();
+			}
+		}
 		sendNBVarsToServer();
     }
     
+    public void setUpIO() {
+    	try {
+			out = new PrintWriter(socket.getOutputStream(), true);
+			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			socketWork = new Runnable() {
+				boolean isRunning = true;
+				
+				public void getVariables() {
+					if(isHost) {
+			    		bClient.p2.setY(arrayXY[0]);
+			    		bClient.p2.setYDirection(arrayXY[1]);
+			    		bClient.p2Score = arrayXY[2];
+			    		winScore = arrayXY[3];
+			            otherPlayerNum = arrayXY[4];
+			        	/*System.out.println(
+			            		"p2 x: " + arrayXY[0] + "\n" +
+			            		"p2 y: " + arrayXY[1] + "\n" +
+			            		"p2Score: " + arrayXY[2]);*/
+			    	}
+			    	else {
+			    		bClient.p1.setY(arrayXY[0]);
+			    		bClient.p1.setYDirection(arrayXY[1]);
+			    		bClient.setX(arrayXY[2]);
+			    		bClient.setY(arrayXY[3]);
+			    		bClient.setXDirection(arrayXY[4]);
+			    		bClient.setYDirection(arrayXY[5]);
+			    		bClient.p1Score = arrayXY[6];
+			    		winScore = arrayXY[7];
+			            otherPlayerNum = arrayXY[8];
+			            /*System.out.println(
+			            		"p1 x: " + arrayXY[0] + "\n" +
+			            		"p1 y: " + arrayXY[1] + "\n" +
+			            		"b x: " + arrayXY[2] + "\n" +
+			            		"b y: " + arrayXY[3] + "\n" +
+			            		"p1Score: " + arrayXY[4]);*/
+			    	}
+				}
+				
+				public void getNBVariables() {
+					if(!isHost)
+						bClient.winScore = arrayXY[0];
+			    	otherPlayerNum = arrayXY[1];
+			        /*System.out.println(
+			        		"winScore: " + arrayXY[0] + "\n" +
+			        		"Other Player Num: " + arrayXY[1]);*/
+			    }
+				
+				public void checkForPacket() {
+					try {
+						if(in.readLine() != null) {
+							inLine = in.readLine();
+							inFormat = inLine.split(",");
+							inFormat[1] = inFormat[1].replace("[", "");
+							inFormat[9] = inFormat[9].replace("]", "");
+							for(int i = 1; i < 10; i++) {
+								arrayXY[i-1] = Integer.parseInt(inFormat[i].trim());
+							}
+							if(inFormat[0].equals("getVars"))
+								getVariables();
+							else if(inFormat[0].equals("getNBVars"))
+								getNBVariables();
+						}
+					}
+					catch (IOException e) {
+						System.out.println("Couldn't read input, closing connection");
+						e.printStackTrace();
+						stop();
+						closeConnection();
+						System.exit(-1);
+					}
+					catch(Exception e) {
+						System.out.println("Exception! Could be OutOfBounds\nMessage ID: " + inFormat[0] + "\nMessage: " + inLine);
+						e.printStackTrace();
+						System.exit(-1);
+					}
+				}
+				
+				public void stop() {
+					isRunning = false;
+				}
+				
+				public void run() {
+					while(isRunning) {
+						checkForPacket();
+					}
+				}
+			};
+			sW = new Thread(socketWork);
+			sW.start();
+		}
+    	catch (IOException e) {
+			System.out.println("Failed setting up I/O");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+    }
+    
     public void sendVarsToServer() {
-        msgHeader = "getVars";
-        if(playerNum == 0) {
-        	msgBody[0] = bClient.p1.x;
-        	msgBody[1] = bClient.p1.y;
-        	msgBody[2] = bClient.x;
-            msgBody[3] = bClient.y;
-            msgBody[4] = bClient.p1Score;
-        }
-        else if(playerNum == 1) {
-        	msgBody[0] = bClient.p2.x;
-        	msgBody[1] = bClient.p2.y;
-        	msgBody[2] = bClient.p2Score;
+        if(isHost) {
+        	msgBody[0] = bClient.p1.getY();
+        	msgBody[1] = bClient.p1.getYDirection();
+        	msgBody[2] = bClient.getX();
+            msgBody[3] = bClient.getY();
+            msgBody[4] = bClient.getXDirection();
+            msgBody[5] = bClient.getYDirection();
+            msgBody[6] = bClient.p1Score;
+            msgBody[7] = winScore;
+            msgBody[8] = playerNum;
         }
         else {
-        	System.out.println("Invalid Player number: " + playerNum);
-        	System.out.println("Closing connection...");
-        	closeConnection();
+        	msgBody[0] = bClient.p2.getY();
+        	msgBody[1] = bClient.p2.getYDirection();
+        	msgBody[2] = bClient.p2Score;
+        	msgBody[3] = winScore;
+            msgBody[4] = playerNum;
         }
-        
         try {
-        	msg = Connection.createMsg(msgHeader, msgBody);
-        	connection.sendMsg(msg);
+        	out.println("getVars," + Arrays.toString(msgBody));
         }
         catch(Exception e) {
         	System.out.println("Message failed to send, shutting down connection...");
         	closeConnection();
+        	System.exit(-1);
         }
     }
     
     public void sendNBVarsToServer() {
-        msgHeader = "getNBVars";
-        msgBody[0] = winScore;
-        msgBody[1] = playerNum;
+    	if(isHost)
+    		msgBody[0] = winScore;
+    	msgBody[1] = playerNum;
         try {
-        	msg = Connection.createMsg(msgHeader, msgBody);
-        	connection.sendMsg(msg);
+        	out.println("getNBVars," + Arrays.toString(msgBody));
         }
         catch(Exception e) {
         	System.out.println("Message failed to send, shutting down connection...");
         	closeConnection();
+        	System.exit(-1);
         }
-    }
-    
-    public void getVariables(Connection conn, org.net.Msg.Msg msg) {
-    	arrayXY = (int[]) msg.getContent();
-    	if(playerNum == 0) {
-    		bClient.p2.x = arrayXY[0];
-        	bClient.p2.y = arrayXY[1];
-        	bClient.p2Score = arrayXY[2];
-        	System.out.println(
-            		"p2 x: "+arrayXY[0] + "\n" +
-            		"p2 y: "+arrayXY[1] + "\n" +
-            		"p2Score: "+arrayXY[2]);
-    	}
-    	else if(playerNum == 1) {
-    		bClient.p1.x = arrayXY[0];
-        	bClient.p1.y = arrayXY[1];
-        	bClient.x = arrayXY[2];
-            bClient.y = arrayXY[3];
-            bClient.p1Score = arrayXY[4];
-            System.out.println(
-            		"p1 x: "+arrayXY[0] + "\n" +
-            		"p1 y: "+arrayXY[1] + "\n" +
-            		"b x: "+arrayXY[2] + "\n" +
-            		"b y: "+arrayXY[3] + "\n" +
-            		"p1Score: "+arrayXY[4]);
-    	}
-    	else {
-        	System.out.println("Invalid Player number: " + playerNum);
-        	System.out.println("Closing connection...");
-        	closeConnection();
-        }
-    }
-    
-    public void getNBVariables(Connection conn, org.net.Msg.Msg msg) {
-    	arrayXY = (int[]) msg.getContent();
-        bClient.winScore = arrayXY[0];
-        otherPlayerNum = arrayXY[1];
-        System.out.println(
-        		"winScore: "+arrayXY[0] + "\n" +
-        		"Other Player Num: " + arrayXY[1]);
-    }
-    
-    public void addMsgHandlers() {
-        prot.addMsgHandler("getVars", "getVariables");
-        prot.addMsgHandler("getNBVars", "getNBVariables");
     }
     
     public void closeConnection() {
             System.out.println("Closing connection...");
-            jnmp2p.close(connection);
+            try {
+            	in.close();
+            	out.close();
+				socket.close();
+			} catch (IOException e) {
+				System.out.println("Couldn't close connection, ioe");
+				e.printStackTrace();
+				System.exit(-1);
+			}
             System.out.println("Connection closed.");
     }
 	

@@ -12,7 +12,7 @@ public class Paddle implements Runnable {
     // Global Variables
     volatile boolean isPaused = false;
     volatile boolean stop = false;
-    int x, y, yDirection, id;
+    int x, y, yDirection, id, playerNum;
     Screen screen;
     
     // Difficulty
@@ -40,6 +40,7 @@ public class Paddle implements Runnable {
         this.y = y;
         this.id = id;
         this.screen = screen;
+        playerNum = screen.playerNum;
         paddle = new Rectangle(x, y, 10, 50);
     }
     
@@ -69,20 +70,24 @@ public class Paddle implements Runnable {
                 }
                 break;
             case 3:
-                if(e.getKeyCode() == KeyEvent.VK_W) {
-                    setYDirection(-1);
-                }
-                if(e.getKeyCode() == KeyEvent.VK_S) {
-                    setYDirection(+1);
-                }
+            	if(playerNum == 0) {
+            		if(e.getKeyCode() == KeyEvent.VK_W) {
+                    	setYDirection(-1);
+                	}
+                	if(e.getKeyCode() == KeyEvent.VK_S) {
+                    	setYDirection(+1);
+                	}
+            	}
                 break;
             case 4:
-                if(e.getKeyCode() == KeyEvent.VK_W) {
-                    setYDirection(-1);
-                }
-                if(e.getKeyCode() == KeyEvent.VK_S) {
-                    setYDirection(+1);
-                }
+            	if(playerNum == 1) {
+            		if(e.getKeyCode() == KeyEvent.VK_W) {
+                    	setYDirection(-1);
+                	}
+                	if(e.getKeyCode() == KeyEvent.VK_S) {
+                    	setYDirection(+1);
+                	}
+            	}
                 break;
         }
     }
@@ -109,26 +114,34 @@ public class Paddle implements Runnable {
                 }
                 break;
             case 3:
-                if(e.getKeyCode() == KeyEvent.VK_W) {
-                    setYDirection(0);
-                }
-                if(e.getKeyCode() == KeyEvent.VK_S) {
-                    setYDirection(0);
-                }
+            	if(playerNum == 0) {
+            		if(e.getKeyCode() == KeyEvent.VK_W) {
+            			setYDirection(0);
+            		}
+            		if(e.getKeyCode() == KeyEvent.VK_S) {
+            			setYDirection(0);
+            		}
+            	}
                 break;
             case 4:
-                if(e.getKeyCode() == KeyEvent.VK_W) {
-                    setYDirection(0);
-                }
-                if(e.getKeyCode() == KeyEvent.VK_S) {
-                    setYDirection(0);
-                }
+            	if(playerNum == 1) {
+            		if(e.getKeyCode() == KeyEvent.VK_W) {
+                    	setYDirection(0);
+                	}
+                	if(e.getKeyCode() == KeyEvent.VK_S) {
+                    	setYDirection(0);
+                	}
+            	}
                 break;
         }
     }
     
     public void setYDirection(int yDir) {
         yDirection = yDir;
+    }
+    
+    public int getYDirection() {
+    	return yDirection;
     }
     
     public void move() {
@@ -139,23 +152,10 @@ public class Paddle implements Runnable {
             paddle.y = 250;
         if(this.id == 2 && players == 1) {
             collision();
-            switch(screen.getScreenType()) {
-            	case LOCALGAME:
-            		if(((LocalGame) screen).getBallY() < paddle.y+25)
-                        setYDirection(-1);
-                    if(((LocalGame) screen).getBallY() > paddle.y+25)
-                        setYDirection(+1);
-            		break;
-            	case MULTIGAME:
-            		if(((MultiplayerGame) screen).getBallY() < paddle.y+25)
-                        setYDirection(-1);
-                    if(((MultiplayerGame) screen).getBallY() > paddle.y+25)
-                        setYDirection(+1);
-            		break;
-            	default:
-            		System.out.println("Wrong Screen for Paddle 2");
-            		break;
-            }
+            if(((LocalGame) screen).getBallY() < paddle.y+25)
+                setYDirection(-1);
+            if(((LocalGame) screen).getBallY() > paddle.y+25)
+                setYDirection(+1);
         }
     }
     
@@ -202,6 +202,10 @@ public class Paddle implements Runnable {
         }
     }
     
+    public void setY(int y) {
+    	this.y = y;
+    }
+    
     public int getY() {
     	return paddle.y;
     }
@@ -218,7 +222,7 @@ public class Paddle implements Runnable {
         this.mode = mode;
     }
     
-    public void setPaused(boolean sp) throws InterruptedException{
+    public void setPaused(boolean sp) throws InterruptedException {
         isPaused = sp;
     }
     
@@ -238,6 +242,7 @@ public class Paddle implements Runnable {
         }
         catch(Exception e) {
             System.err.println(e.getMessage());
+            System.exit(-1);
         }
     }
     

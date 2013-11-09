@@ -1,7 +1,5 @@
 package pongreloaded;
 
-import org.net.p2p.*;
-
 /**
  * @author Mcat12
  */
@@ -12,9 +10,7 @@ public class MsgHandler {
     	MGscreen = mg;
     }
     
-    public void getVariables(Connection conn, org.net.Msg.Msg msg) {
-    	//MGscreen = (MultiplayerGame) Pong.screen.getScreen();
-    	MGscreen.arrayXY = (int[]) msg.getContent();
+    public void getVariables() {
     	if(MGscreen.playerNum == 0) {
     		MGscreen.bClient.p2.x = MGscreen.arrayXY[0];
     		MGscreen.bClient.p2.y = MGscreen.arrayXY[1];
@@ -42,17 +38,13 @@ public class MsgHandler {
         	System.out.println("Closing connection...");
         	MGscreen.closeConnection();
         }
-    	//Pong.screen = MGscreen;
     }
     
-    public void getNBVariables(Connection conn, org.net.Msg.Msg msg) {
-    	//MGscreen = (MultiplayerGame) Pong.screen.getScreen();
-    	MGscreen.arrayXY = (int[]) msg.getContent();
+    public void getNBVariables() {
     	MGscreen.bClient.winScore = MGscreen.arrayXY[0];
     	MGscreen.otherPlayerNum = MGscreen.arrayXY[1];
         System.out.println(
         		"winScore: "+MGscreen.arrayXY[0] + "\n" +
         		"Other Player Num: " + MGscreen.arrayXY[1]);
-        //Pong.screen = MGscreen;
     }
 }

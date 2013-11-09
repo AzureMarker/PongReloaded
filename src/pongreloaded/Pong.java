@@ -156,7 +156,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     	if(screen.getScreenType() == Screens.MULTIMENU) {
         	ipText.setVisible(true);
         	connectPortText.setVisible(true);
-        	//hostPortText.setVisible(true);
+        	hostPortText.setVisible(true);
         }
         else {
         	ipText.setVisible(false);

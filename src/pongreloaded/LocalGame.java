@@ -195,6 +195,7 @@ public class LocalGame implements Screen {
         }
         catch(InterruptedException ie) {
             System.out.println("Error: " + ie.getMessage());
+            System.exit(-1);
         }
         return this;
 	}
@@ -239,6 +240,7 @@ public class LocalGame implements Screen {
                 }
                 catch(InterruptedException ie) {
                     System.out.println("Error: " + ie.getMessage());
+                    System.exit(-1);
                 }
             }
             
