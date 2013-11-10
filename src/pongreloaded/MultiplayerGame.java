@@ -43,7 +43,7 @@ public class MultiplayerGame implements Screen {
 	
 	// Game
 	Ball bClient;
-	static int winScore;
+	int winScore;
 	
 	// Threads
 	Thread bC;
@@ -291,6 +291,7 @@ public class MultiplayerGame implements Screen {
 					}
 					catch(NullPointerException npe) {
 						System.out.println("Server closed, closing");
+						closeConnection();
 						System.exit(0);
 					}
 					catch(Exception e) {
@@ -394,10 +395,6 @@ public class MultiplayerGame implements Screen {
 			}
             System.out.println("Connection closed.");
     }
-	
-	public static void setWinScore(int score) {
-		winScore = score;
-	}
 	
 	public void displayOutput(Graphics g) {
 		// Game

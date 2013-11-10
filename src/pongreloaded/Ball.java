@@ -13,6 +13,7 @@ public class Ball implements Runnable {
     volatile boolean isPaused = false;
     volatile boolean stop = false;
     int x, y, xDirection, yDirection;
+    int ScoreAntiLag = 0;
     
     // Difficulty
     int difficulty = 7;
@@ -128,14 +129,25 @@ public class Ball implements Runnable {
         collision();
         ball.x += xDirection;
         ball.y += yDirection;
-        //Bounce the Ball When the Edge is Detected
+        if(ScoreAntiLag > 0)
+        	ScoreAntiLag++;
+        if(ScoreAntiLag >= 500)
+        	ScoreAntiLag = 0;
+        
+        // Bounce the Ball When the Edge is Detected
         if(ball.x <= 0) {
             setXDirection(+1);
-            p2Score++;
+            if(ScoreAntiLag == 0) {
+            	p2Score++;
+            	ScoreAntiLag++;
+            }
         }
         if(ball.x >= 385) {
             setXDirection(-1);
-            p1Score++;
+            if(ScoreAntiLag == 0) {
+            	p1Score++;
+            	ScoreAntiLag++;
+            }
         }
         if(ball.y <= 25)
             setYDirection(+1);
