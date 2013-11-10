@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,7 +14,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Arrays;
-
 import javax.swing.JOptionPane;
 
 /**
@@ -32,6 +32,8 @@ public class MultiplayerGame implements Screen {
     int[] msgBody = new int[9];
     int[] arrayXY = new int[9];
     boolean isHost;
+    boolean acceptedStop = false;
+    boolean remoteAcceptedStop = false;
     ServerSocket server;
     Socket socket;
     MsgHandler msgHandler;
@@ -73,6 +75,7 @@ public class MultiplayerGame implements Screen {
 	}
 	
 	public void startRemoteGame() {
+		System.out.println("Starting Remote Game");
         bC.start();
         pC.start();
         pM.start();
@@ -196,7 +199,7 @@ public class MultiplayerGame implements Screen {
 		}
 		System.out.println("Got number, sending to server");
 		sendVarsToServer();
-		System.out.println("Sent number, waiting for player...");
+		System.out.println("Sent number, waiting for player");
 		if(isHost) {
 			System.out.println("Waiting for other player to choose number...");
 			while(otherPlayerNum != 0 && otherPlayerNum != 1) {
@@ -205,9 +208,8 @@ public class MultiplayerGame implements Screen {
 		}
 		if(playerNum == 0)
 			bClient.p1.setPlayerNum(playerNum);
-		if(playerNum == 1) {
+		if(playerNum == 1)
 			bClient.p2.setPlayerNum(playerNum);
-		}
 		sendNBVarsToServer();
     }
     
@@ -225,10 +227,6 @@ public class MultiplayerGame implements Screen {
 			    		bClient.p2Score = arrayXY[2];
 			    		winScore = arrayXY[3];
 			            otherPlayerNum = arrayXY[4];
-			        	/*System.out.println(
-			            		"p2 x: " + arrayXY[0] + "\n" +
-			            		"p2 y: " + arrayXY[1] + "\n" +
-			            		"p2Score: " + arrayXY[2]);*/
 			    	}
 			    	else {
 			    		bClient.p1.setY(arrayXY[0]);
@@ -240,12 +238,6 @@ public class MultiplayerGame implements Screen {
 			    		bClient.p1Score = arrayXY[6];
 			    		winScore = arrayXY[7];
 			            otherPlayerNum = arrayXY[8];
-			            /*System.out.println(
-			            		"p1 x: " + arrayXY[0] + "\n" +
-			            		"p1 y: " + arrayXY[1] + "\n" +
-			            		"b x: " + arrayXY[2] + "\n" +
-			            		"b y: " + arrayXY[3] + "\n" +
-			            		"p1Score: " + arrayXY[4]);*/
 			    	}
 				}
 				
@@ -253,9 +245,6 @@ public class MultiplayerGame implements Screen {
 					if(!isHost)
 						bClient.winScore = arrayXY[0];
 			    	otherPlayerNum = arrayXY[1];
-			        /*System.out.println(
-			        		"winScore: " + arrayXY[0] + "\n" +
-			        		"Other Player Num: " + arrayXY[1]);*/
 			    }
 				
 				public void checkForPacket() {
@@ -268,10 +257,29 @@ public class MultiplayerGame implements Screen {
 							for(int i = 1; i < 10; i++) {
 								arrayXY[i-1] = Integer.parseInt(inFormat[i].trim());
 							}
-							if(inFormat[0].equals("getVars"))
-								getVariables();
-							else if(inFormat[0].equals("getNBVars"))
-								getNBVariables();
+							
+							switch(inFormat[0]) {
+								case "getVars":
+									getVariables();
+									break;
+								case "getNBVars":
+									getNBVariables();
+									break;
+								case "stop":
+									System.out.println("Server says to stop");
+									acceptedStop = true;
+									acceptStopCommand();
+									System.out.println("Sent acceptedStop, stopping serverWork and closing connection");
+									stop();
+									closeConnection();
+									System.exit(0);
+									break;
+								case "acceptStop":
+									System.out.println("Server accepted stop, stopping serverWork");
+									remoteAcceptedStop = true;
+									stop();
+							}
+							
 						}
 					}
 					catch (IOException e) {
@@ -281,8 +289,12 @@ public class MultiplayerGame implements Screen {
 						closeConnection();
 						System.exit(-1);
 					}
+					catch(NullPointerException npe) {
+						System.out.println("Server closed, closing");
+						System.exit(0);
+					}
 					catch(Exception e) {
-						System.out.println("Exception! Could be OutOfBounds\nMessage ID: " + inFormat[0] + "\nMessage: " + inLine);
+						System.out.println("Exception!\nMessage ID: " + inFormat[0] + "\nMessage: " + inLine);
 						e.printStackTrace();
 						System.exit(-1);
 					}
@@ -351,6 +363,24 @@ public class MultiplayerGame implements Screen {
         }
     }
     
+    public void tellServerToStop() {
+    	try {
+    		out.println("stop," + Arrays.toString(msgBody));
+    	}
+    	catch(Exception e) {
+    		System.out.println("Message failed to send, shutting down connection...");
+    		closeConnection();
+    		System.exit(-1);
+    	}
+    }
+    
+    public void acceptStopCommand() {
+    	try {
+    		out.println("acceptStop," + Arrays.toString(msgBody));
+    	}
+    	catch(Exception e) { }
+    }
+    
     public void closeConnection() {
             System.out.println("Closing connection...");
             try {
@@ -413,6 +443,17 @@ public class MultiplayerGame implements Screen {
 	}
 	
 	public Screen respondToUserInput(MouseWheelEvent mouse) {
+		return this;
+	}
+	
+	public Screen windowClosingEvent(WindowEvent window) {
+		if(!acceptedStop) {
+			System.out.println("Telling Server to stop");
+			tellServerToStop();
+			System.out.println("Waiting for server's response...");
+			while(!remoteAcceptedStop) { }
+			closeConnection();
+		}
 		return this;
 	}
 }

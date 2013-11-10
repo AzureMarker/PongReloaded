@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.event.WindowEvent;
 
 /**
  * @author Mcat12
@@ -146,6 +147,10 @@ public class MultiplayerMenu implements Screen {
 	}
 	
 	public Screen respondToUserInput(MouseWheelEvent mouse) {
+		return this;
+	}
+	
+	public Screen windowClosingEvent(WindowEvent window) {
 		return this;
 	}
 }

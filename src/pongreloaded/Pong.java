@@ -9,7 +9,7 @@ import javax.swing.border.Border;
 /**
  * @author Mcat12
  */
-public class Pong extends JFrame implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
+public class Pong extends JFrame implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, WindowListener  {
 	private static final long serialVersionUID = -6694074482949248838L;
 	// Double Buffering
     Image dbImage;
@@ -72,6 +72,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         this.setSize(screenSize);
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.addWindowListener(this);
         this.getContentPane().setBackground(Color.DARK_GRAY);
         this.addKeyListener(this);
         this.addMouseListener(this);
@@ -136,6 +137,23 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     public void mouseWheelMoved(MouseWheelEvent mouseWheel) {
     	screen = screen.respondToUserInput(mouseWheel);
     }
+    
+    @Override
+	public void windowActivated(WindowEvent window) { }
+	@Override
+	public void windowClosed(WindowEvent window) { }
+	@Override
+	public void windowClosing(WindowEvent window) {
+		screen = screen.windowClosingEvent(window);
+	}
+	@Override
+	public void windowDeactivated(WindowEvent window) { }
+	@Override
+	public void windowDeiconified(WindowEvent window) { }
+	@Override
+	public void windowIconified(WindowEvent window) { }
+	@Override
+	public void windowOpened(WindowEvent window) { }
     
     @Override
     public void paint(Graphics g) {
