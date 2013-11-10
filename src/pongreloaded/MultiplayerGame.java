@@ -203,9 +203,12 @@ public class MultiplayerGame implements Screen {
 				sendNBVarsToServer();
 			}
 		}
+		if(playerNum == 0)
+			bClient.p1.setPlayerNum(playerNum);
+		if(playerNum == 1) {
+			bClient.p2.setPlayerNum(playerNum);
+		}
 		sendNBVarsToServer();
-		bClient.p1.setPlayerNum(0);
-		bClient.p2.setPlayerNum(1);
     }
     
     public void setUpIO() {
