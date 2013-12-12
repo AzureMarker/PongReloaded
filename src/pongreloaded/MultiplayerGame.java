@@ -44,6 +44,8 @@ public class MultiplayerGame implements Screen {
 	// Game
 	Ball bClient;
 	int winScore;
+	int cachedP1Score = 0;
+	int cachedP2Score = 0;
 	
 	// Threads
 	Thread bC;
@@ -85,27 +87,27 @@ public class MultiplayerGame implements Screen {
     }
 	
 	public boolean isFinished() {
-        if(bClient.p1Score >= winScore) {
+        if(bClient.p1Score >= winScore)
             return true;
-        }
-        if(bClient.p2Score >= winScore) {
+        if(bClient.p2Score >= winScore)
             return true;
-        }
         return false;
     }
     
     public int getWinner() {
-    	if(bClient.p1Score >= winScore) {
+    	if(bClient.p1Score >= winScore)
             return 1;
-        }
-        if(bClient.p2Score >= winScore) {
+        if(bClient.p2Score >= winScore)
             return 2;
-        }
         return 0;
     }
     
-    public int getBallY() {
-    	return bClient.getY();
+    public void updateScore() {
+    	if(isHost && bClient.p1Score != cachedP1Score || bClient.p2Score != cachedP2Score) {
+    		sendUpdatedScore();
+    		cachedP1Score = bClient.p1Score;
+    		cachedP2Score = bClient.p2Score;
+    	}
     }
 	
 	public void host() {
@@ -224,9 +226,7 @@ public class MultiplayerGame implements Screen {
 					if(isHost) {
 			    		bClient.p2.setY(arrayXY[0]);
 			    		bClient.p2.setYDirection(arrayXY[1]);
-			    		bClient.p2Score = arrayXY[2];
-			    		winScore = arrayXY[3];
-			            otherPlayerNum = arrayXY[4];
+			            otherPlayerNum = arrayXY[2];
 			    	}
 			    	else {
 			    		bClient.p1.setY(arrayXY[0]);
@@ -235,9 +235,8 @@ public class MultiplayerGame implements Screen {
 			    		bClient.setY(arrayXY[3]);
 			    		bClient.setXDirection(arrayXY[4]);
 			    		bClient.setYDirection(arrayXY[5]);
-			    		bClient.p1Score = arrayXY[6];
-			    		winScore = arrayXY[7];
-			            otherPlayerNum = arrayXY[8];
+			    		winScore = arrayXY[6];
+			            otherPlayerNum = arrayXY[7];
 			    	}
 				}
 				
@@ -246,6 +245,11 @@ public class MultiplayerGame implements Screen {
 						bClient.winScore = arrayXY[0];
 			    	otherPlayerNum = arrayXY[1];
 			    }
+				
+				public void getUpdatedScore() {
+					bClient.p1Score = arrayXY[0];
+					bClient.p2Score = arrayXY[1];
+				}
 				
 				public void checkForPacket() {
 					try {
@@ -264,6 +268,9 @@ public class MultiplayerGame implements Screen {
 									break;
 								case "getNBVars":
 									getNBVariables();
+									break;
+								case "getUpdatedScore":
+									getUpdatedScore();
 									break;
 								case "stop":
 									System.out.println("Server says to stop");
@@ -329,16 +336,13 @@ public class MultiplayerGame implements Screen {
             msgBody[3] = bClient.getY();
             msgBody[4] = bClient.getXDirection();
             msgBody[5] = bClient.getYDirection();
-            msgBody[6] = bClient.p1Score;
-            msgBody[7] = winScore;
-            msgBody[8] = playerNum;
+            msgBody[6] = winScore;
+            msgBody[7] = playerNum;
         }
         else {
         	msgBody[0] = bClient.p2.getY();
         	msgBody[1] = bClient.p2.getYDirection();
-        	msgBody[2] = bClient.p2Score;
-        	msgBody[3] = winScore;
-            msgBody[4] = playerNum;
+            msgBody[2] = playerNum;
         }
         try {
         	out.println("getVars," + Arrays.toString(msgBody));
@@ -358,6 +362,19 @@ public class MultiplayerGame implements Screen {
         	out.println("getNBVars," + Arrays.toString(msgBody));
         }
         catch(Exception e) {
+        	System.out.println("Message failed to send, shutting down connection...");
+        	closeConnection();
+        	System.exit(-1);
+        }
+    }
+    
+    public void sendUpdatedScore() {
+    	msgBody[0] = bClient.p1Score;
+    	msgBody[1] = bClient.p2Score;
+    	try {
+    		out.println("getUpdatedScore," + Arrays.toString(msgBody));
+    	}
+    	catch(Exception e) {
         	System.out.println("Message failed to send, shutting down connection...");
         	closeConnection();
         	System.exit(-1);
@@ -409,6 +426,8 @@ public class MultiplayerGame implements Screen {
         
         // Send Variables to Server
         sendVarsToServer();
+        
+        updateScore();
 	}
 	
 	public Screens getScreenType() {
