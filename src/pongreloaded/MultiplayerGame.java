@@ -104,6 +104,7 @@ public class MultiplayerGame implements Screen {
     
     public void updateScore() {
     	if(isHost && bClient.p1Score != cachedP1Score || bClient.p2Score != cachedP2Score) {
+    		System.out.println("Scores aren't syncronized, updating...");
     		sendUpdatedScore();
     		cachedP1Score = bClient.p1Score;
     		cachedP2Score = bClient.p2Score;
@@ -424,10 +425,10 @@ public class MultiplayerGame implements Screen {
         g.drawString(""+bClient.p1Score, 15, 50);
         g.drawString(""+bClient.p2Score, 370, 50);
         
-        // Send Variables to Server
+        // Send info to other player
         sendVarsToServer();
-        
-        updateScore();
+        if(isHost)
+        	sendUpdatedScore();
 	}
 	
 	public Screens getScreenType() {
@@ -464,7 +465,10 @@ public class MultiplayerGame implements Screen {
 	
 	public Screen windowClosingEvent(WindowEvent window) {
 		if(!acceptedStop) {
-			System.out.println("Telling Server to stop");
+			if(isHost)
+				System.out.println("Telling Client to stop");
+			else
+				System.out.println("Telling Server to stop");
 			tellServerToStop();
 			System.out.println("Waiting for server's response...");
 			while(!remoteAcceptedStop) { }
