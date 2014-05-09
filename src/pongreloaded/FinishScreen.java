@@ -1,35 +1,25 @@
 package pongreloaded;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.WindowEvent;
+import java.awt.*;
+import java.awt.event.*;
 
 /**
  * @author Mcat12
  */
 public class FinishScreen implements Screen {
 	// Button
-	Rectangle mainMenuButton = new Rectangle(100, 125, 200, 25);
-	
-	// Hover
-	boolean mainMenuHover;
+	Button mainMenuButton;
 	
 	// Display
-	int GWIDTH;
-	int GHEIGHT;
+	Dimension screenSize;
 	
 	// Winner
 	int winID;
 	
-	public FinishScreen(int GWIDTH, int GHEIGHT, int winID) {
-		this.GWIDTH = GWIDTH;
-		this.GHEIGHT = GHEIGHT;
+	public FinishScreen(Dimension screenSize, int winID) {
+		this.screenSize = screenSize;
 		this.winID = winID;
+		mainMenuButton = new Button(100, 125, 200, 25, "Main Menu", screenSize);
 		System.out.println("Player " + winID + " Won!");
 	}
 	
@@ -40,14 +30,7 @@ public class FinishScreen implements Screen {
         g.drawString("Player " + winID + " Won the Game!", 95, 75);
         
         // Main Menu Button
-        g.setFont(new Font("Arial", Font.BOLD, 12));
-        if(!mainMenuHover)
-            g.setColor(Color.CYAN);
-        else
-            g.setColor(Color.PINK);
-        g.fillRect(mainMenuButton.x, mainMenuButton.y, mainMenuButton.width, mainMenuButton.height);
-        g.setColor(Color.GRAY);
-        g.drawString("Main Menu", mainMenuButton.x+70, mainMenuButton.y+17);
+        mainMenuButton.draw(g);
 	}
 	
 	public Screens getScreenType() {
@@ -71,10 +54,7 @@ public class FinishScreen implements Screen {
         int my = mouse.getY();
 		
 		// Check if Hovering over Main Menu Button
-        if(mx > mainMenuButton.x && mx < mainMenuButton.x+mainMenuButton.width && my > mainMenuButton.y && my < mainMenuButton.y+mainMenuButton.height)
-            mainMenuHover = true;
-        else
-            mainMenuHover = false;
+        mainMenuButton.adjustHover(mx, my);
 		
 		return this;
 	}
@@ -84,8 +64,8 @@ public class FinishScreen implements Screen {
         int my = mouse.getY();
 		
 		// Check if just Pressed Main Menu Button
-        if(mx > mainMenuButton.x && mx < mainMenuButton.x+mainMenuButton.width && my > mainMenuButton.y && my < mainMenuButton.y+mainMenuButton.height)
-            return new MainMenu(GWIDTH, GHEIGHT);
+        if(mainMenuButton.intersects(mx, my))
+            return new MainMenu(screenSize);
 		return this;
 	}
 	

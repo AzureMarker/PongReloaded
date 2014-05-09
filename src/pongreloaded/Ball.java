@@ -1,9 +1,7 @@
 package pongreloaded;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.util.Random;
+import java.awt.*;
+import java.util.*;
 
 /**
  * @author Mcat12

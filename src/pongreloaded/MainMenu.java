@@ -1,20 +1,14 @@
 package pongreloaded;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.WindowEvent;
+import java.awt.*;
+import java.awt.event.*;
 
 /**
  * @author Mcat12
  */
 public class MainMenu implements Screen {
 	// Buttons
-	Rectangle startButton = new Rectangle(150, 100, 100, 25);
+	Button startButton;
     Rectangle diffButton = new Rectangle(85, 185, 100, 25);
     Rectangle playersButton = new Rectangle(215, 185, 100, 25);
     Rectangle modeButton = new Rectangle(85, 140, 100, 25);
@@ -23,7 +17,6 @@ public class MainMenu implements Screen {
     Rectangle multiButton = new Rectangle(215, 140, 100, 25);
     
     // Hover
-    boolean startHover;
     boolean diffHover;
     boolean playersHover;
     boolean modeHover;
@@ -49,12 +42,10 @@ public class MainMenu implements Screen {
     int p2Score;
     
     // Variables for Screen Size
-    int GWIDTH;
-    int GHEIGHT;
+    Dimension screenSize;
     
-    public MainMenu(int GWIDTH, int GHEIGHT, int ballDiff, int p2Diff, int players, int mode, int winScore, int ballX, int ballY, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score) {
-    	this.GWIDTH = GWIDTH;
-    	this.GHEIGHT = GHEIGHT;
+    public MainMenu(Dimension screenSize, int ballDiff, int p2Diff, int players, int mode, int winScore, int ballX, int ballY, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score) {
+    	this.screenSize = screenSize;
     	this.ballDiff = ballDiff;
     	this.p2Diff = p2Diff;
     	this.players = players;
@@ -69,13 +60,14 @@ public class MainMenu implements Screen {
     	this.p1Score = p1Score;
     	this.p2Score = p2Score;
     	isFirstRun = false;
+    	startButton = new Button(150, 100, 100, 25, "Start Game", screenSize);
+    	startButton.setText("Resume");
     	System.out.println("MainMenu Full Constructor");
     }
     
-    public MainMenu(int GWIDTH, int GHEIGHT) {
-    	this.GWIDTH = GWIDTH;
-    	this.GHEIGHT = GHEIGHT;
-    	isFirstRun = true;
+    public MainMenu(Dimension screenSize) {
+    	this.screenSize = screenSize;
+    	startButton.setText("Start Game");
     	System.out.println("MainMenu First Run");
     }
 	
@@ -94,17 +86,7 @@ public class MainMenu implements Screen {
         g.drawString("Pong Reloaded", 108, 75);
         
         // Start Button
-        if(!startHover)
-            g.setColor(Color.CYAN);
-        else
-            g.setColor(Color.PINK);
-        g.fillRect(startButton.x, startButton.y, startButton.width, startButton.height);
-        g.setFont(new Font("Arial", Font.BOLD, 12));
-        g.setColor(Color.GRAY);
-        if(isFirstRun == true)
-            g.drawString("Start Game", startButton.x+20, startButton.y+17);
-        else
-            g.drawString("Resume", startButton.x+27, startButton.y+17);
+        startButton.draw(g);
         
         // Multiplayer Button
         if(!multiHover)
@@ -203,10 +185,7 @@ public class MainMenu implements Screen {
         int my = mouse.getY();
         
         // Check if Hovering over Start Button
-        if(mx > startButton.x && mx < startButton.x+startButton.width && my > startButton.y && my < startButton.y+startButton.height)
-            startHover = true;
-        else
-            startHover = false;
+        startButton.adjustHover(mx, my);
         
         // Check if Hovering over Difficulty Button
         if(mx > diffButton.x && mx < diffButton.x+diffButton.width && my > diffButton.y && my < diffButton.y+diffButton.height)
@@ -252,11 +231,11 @@ public class MainMenu implements Screen {
         int my = mouse.getY();
         
         // Check if Start Button was pressed
-	    if(mx > startButton.x && mx < startButton.x+startButton.width && my > startButton.y && my < startButton.y+startButton.height) {
+	    if(startButton.intersects(mx, my)) {
 	        if(isFirstRun == true)
-	        	return new LocalGame(GWIDTH, GHEIGHT, ballDiff, p2Diff, players, mode, winScore);
+	        	return new LocalGame(screenSize, ballDiff, p2Diff, players, mode, winScore);
 	        else
-	        	return new LocalGame(GWIDTH, GHEIGHT, ballDiff, p2Diff, players, mode, winScore, ballX, ballY, p1Y, p2Y, xDir, yDir, p1Score, p2Score);
+	        	return new LocalGame(screenSize, ballDiff, p2Diff, players, mode, winScore, ballX, ballY, p1Y, p2Y, xDir, yDir, p1Score, p2Score);
 	    }
 	    
 	    // Check if Score Button was pressed
@@ -319,7 +298,7 @@ public class MainMenu implements Screen {
 	    // Check if Multiplayer Button was pressed
 	    if(mx > multiButton.x && mx < multiButton.x+multiButton.width && my > multiButton.y && my < multiButton.y+multiButton.height) {
 	    	Pong.disposeMainMenu = true;
-	    	return new MultiplayerMenu(GWIDTH, GHEIGHT, winScore);
+	    	return new MultiplayerMenu(screenSize, winScore);
 	    }
 	    
 	    // Check if Exit Button was pressed

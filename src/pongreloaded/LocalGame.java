@@ -1,25 +1,15 @@
 package pongreloaded;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.WindowEvent;
+import java.awt.*;
+import java.awt.event.*;
 
 /**
  * @author Mcat12
  */
 public class LocalGame implements Screen {
 	// Buttons
-	Rectangle returnButton = new Rectangle(100, 75, 200, 25);
-    Rectangle mainMenuButton = new Rectangle(100, 125, 200, 25);
-    
-    // Button Hover
-    boolean returnHover;
-    boolean mainMenuHover;
+	Button returnButton;
+    Button mainMenuButton;
 	
 	// Game
     Ball b;
@@ -31,14 +21,14 @@ public class LocalGame implements Screen {
     Thread p1;
     Thread p2;
     
-    // Variables for Screen Size
-    int GWIDTH;
-    int GHEIGHT;
+    // Screen Size
+    Dimension screenSize;
     
-    public LocalGame(int GWIDTH, int GHEIGHT, int ballDiff, int p2Diff, int players, int mode, int winScore, int ballX, int ballY, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score) {
-    	this.GWIDTH = GWIDTH;
-    	this.GHEIGHT = GHEIGHT;
+    public LocalGame(Dimension screenSize, int ballDiff, int p2Diff, int players, int mode, int winScore, int ballX, int ballY, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score) {
+    	this.screenSize = screenSize;
     	this.winScore = winScore;
+    	returnButton = new Button(100, 75, 200, 25, "Return to Game", screenSize);
+    	mainMenuButton = new Button(100, 125, 200, 25, "Main Menu", screenSize);
     	b = new Ball(ballX, ballY, p1Y, p2Y, xDir, yDir, p1Score, p2Score, this);
     	b.setDifficulty(ballDiff);
     	b.p2.setDifficulty(p2Diff);
@@ -55,9 +45,8 @@ public class LocalGame implements Screen {
     	startLocalGame();
     }
     
-    public LocalGame(int GWIDTH, int GHEIGHT, int ballDiff, int p2Diff, int players, int mode, int winScore) {
-    	this.GWIDTH = GWIDTH;
-    	this.GHEIGHT = GHEIGHT;
+    public LocalGame(Dimension screenSize, int ballDiff, int p2Diff, int players, int mode, int winScore) {
+    	this.screenSize = screenSize;
     	this.winScore = winScore;
     	b = new Ball(193, 143, true, this);
     	ball = new Thread(b);
@@ -130,30 +119,13 @@ public class LocalGame implements Screen {
 		if(isPaused == true) {
 			// Shade Background
 			g.setColor(new Color(0f,0f,0f,0.3f));
-	        g.fillRect(0,0, GWIDTH, GHEIGHT);
-			
-			// Pause Menu
-	        g.setColor(new Color(0f,0f,0f,0.3f));
-	        g.fillRect(0,0, GWIDTH, GHEIGHT);
+	        g.fillRect(0,0, screenSize.width, screenSize.height);
 	        
 	        // Return Button
-	        if(!returnHover)
-	            g.setColor(Color.CYAN);
-	        else
-	            g.setColor(Color.PINK);
-	        g.fillRect(returnButton.x, returnButton.y, returnButton.width, returnButton.height);
-	        g.setFont(new Font("Arial", Font.BOLD, 12));
-	        g.setColor(Color.GRAY);
-	        g.drawString("Return to Game", returnButton.x+55, returnButton.y+17);
+	        returnButton.draw(g);
 	        
 	        // Main Menu Button
-	        if(!mainMenuHover)
-	            g.setColor(Color.CYAN);
-	        else
-	            g.setColor(Color.PINK);
-	        g.fillRect(mainMenuButton.x, mainMenuButton.y, mainMenuButton.width, mainMenuButton.height);
-	        g.setColor(Color.GRAY);
-	        g.drawString("Main Menu", mainMenuButton.x+70, mainMenuButton.y+17);
+	        mainMenuButton.draw(g);
 		}
 	}
 	
@@ -213,16 +185,10 @@ public class LocalGame implements Screen {
 	        int my = mouse.getY();
 	        
 			// Check if Hovering over Return Button
-            if(mx > returnButton.x && mx < returnButton.x+returnButton.width && my > returnButton.y && my < returnButton.y+returnButton.height)
-                returnHover = true;
-            else
-                returnHover = false;
+            returnButton.adjustHover(mx, my);
             
             // Check if Hovering over Main Menu Button
-            if(mx > mainMenuButton.x && mx < mainMenuButton.x+mainMenuButton.width && my > mainMenuButton.y && my < mainMenuButton.y+mainMenuButton.height)
-                mainMenuHover = true;
-            else
-                mainMenuHover = false;
+            mainMenuButton.adjustHover(mx, my);
 		}
 		else
 			return this;
@@ -235,7 +201,7 @@ public class LocalGame implements Screen {
 	        int my = mouse.getY();
             
             // Check if just Pressed Return Button
-            if(mx > returnButton.x && mx < returnButton.x+returnButton.width && my > returnButton.y && my < returnButton.y+returnButton.height) {
+            if(returnButton.intersects(mx, my)) {
                 try{
                     switchLocalPause();
                 }
@@ -246,11 +212,11 @@ public class LocalGame implements Screen {
             }
             
             // Check if just Pressed Main Menu Button
-            if(mx > mainMenuButton.x && mx < mainMenuButton.x+mainMenuButton.width && my > mainMenuButton.y && my < mainMenuButton.y+mainMenuButton.height) {
+            if(mainMenuButton.intersects(mx, my)) {
             	b.p1.stop();
             	b.p2.stop();
             	b.stop();
-                return new MainMenu(GWIDTH, GHEIGHT, b.difficulty, b.p2.difficulty, b.p2.players, b.p1.mode, b.winScore, b.getX(), b.getY(), b.p1.getY(), b.p2.getY(), b.xDirection, b.yDirection, b.p1Score, b.p2Score);
+                return new MainMenu(screenSize, b.difficulty, b.p2.difficulty, b.p2.players, b.p1.mode, b.winScore, b.getX(), b.getY(), b.p1.getY(), b.p2.getY(), b.xDirection, b.yDirection, b.p1Score, b.p2Score);
             }
 		}
 		else

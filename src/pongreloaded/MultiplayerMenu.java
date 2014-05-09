@@ -1,22 +1,16 @@
 package pongreloaded;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.WindowEvent;
+import java.awt.*;
+import java.awt.event.*;
 
 /**
  * @author Mcat12
  */
 public class MultiplayerMenu implements Screen {
 	// Buttons
-	Rectangle connectButton = new Rectangle(50, 170, 100, 25);
-    Rectangle hostButton = new Rectangle(250, 140, 100, 25);
-    Rectangle multiToMainButton = new Rectangle(25, 250, 100, 25);
+	Button connectButton;
+	Button hostButton;
+	Button multiToMainButton;
     
     // Hover
     boolean connectHover;
@@ -24,15 +18,16 @@ public class MultiplayerMenu implements Screen {
     boolean multiToMainHover;
     
     // Game
-    int GWIDTH;
-    int GHEIGHT;
+    Dimension screenSize;
     int winScore;
     boolean isHost = false;
 	
-	public MultiplayerMenu(int GWIDTH, int GHEIGHT, int winScore) {
-		this.GWIDTH = GWIDTH;
-		this.GHEIGHT = GHEIGHT;
+	public MultiplayerMenu(Dimension screenSize, int winScore) {
+		this.screenSize = screenSize;
 		this.winScore = winScore;
+		connectButton = new Button(50, 170, 100, 25, "Connect", screenSize);
+		hostButton = new Button(250, 140, 100, 25, "Host", screenSize);
+		multiToMainButton = new Button(25, 250, 100, 25, "Back", screenSize);
 	}
 	
 	public Screens getScreenType() {
@@ -54,35 +49,17 @@ public class MultiplayerMenu implements Screen {
         g.drawString("Enter Ip Address & Port", 37, 100);
         
         // Connect Button
-        if(!connectHover)
-            g.setColor(Color.CYAN);
-        else
-            g.setColor(Color.PINK);
-        g.fillRect(connectButton.x, connectButton.y, connectButton.width, connectButton.height);
-        g.setColor(Color.GRAY);
-        g.drawString("Connect", connectButton.x+26, connectButton.y+17);
+        connectButton.draw(g);
         
         // Host Port Input
         g.setColor(Color.WHITE);
         g.drawString("Enter Port Number", 250, 100);
         
         // Host Button
-        if(!hostHover)
-            g.setColor(Color.CYAN);
-        else
-            g.setColor(Color.PINK);
-        g.fillRect(hostButton.x, hostButton.y, hostButton.width, hostButton.height);
-        g.setColor(Color.GRAY);
-        g.drawString("Host", hostButton.x+35, hostButton.y+17);
+        hostButton.draw(g);
         
         // Back Button (Multiplayer to Main)
-        if(!multiToMainHover)
-            g.setColor(Color.CYAN);
-        else
-            g.setColor(Color.PINK);
-        g.fillRect(multiToMainButton.x, multiToMainButton.y, multiToMainButton.width, multiToMainButton.height);
-        g.setColor(Color.GRAY);
-        g.drawString("Back", multiToMainButton.x+35, multiToMainButton.y+17);
+        multiToMainButton.draw(g);
 	}
 	
 	public Screen respondToUserInput(KeyEvent key) {
@@ -97,23 +74,9 @@ public class MultiplayerMenu implements Screen {
 		int mx = mouse.getX();
         int my = mouse.getY();
 		
-		// Check if Hovering over Connect Button
-        if(mx > connectButton.x && mx < connectButton.x+connectButton.width && my > connectButton.y && my < connectButton.y+connectButton.height)
-            connectHover = true;
-        else
-            connectHover = false;
-        
-        // Check if Hovering over Host Button
-        if(mx > hostButton.x && mx < hostButton.x+hostButton.width && my > hostButton.y && my < hostButton.y+hostButton.height)
-            hostHover = true;
-        else
-            hostHover = false;
-        
-        // Check if Hovering over Multiplayer To Main Button
-        if(mx > multiToMainButton.x && mx < multiToMainButton.x+multiToMainButton.width && my > multiToMainButton.y && my < multiToMainButton.y+multiToMainButton.height)
-            multiToMainHover = true;
-        else
-            multiToMainHover = false;
+        connectButton.adjustHover(mx, my);
+        hostButton.adjustHover(mx, my);
+        multiToMainButton.adjustHover(mx, my);
         
         return this;
 	}
@@ -122,8 +85,7 @@ public class MultiplayerMenu implements Screen {
 		int mx = mouse.getX();
         int my = mouse.getY();
         
-        // Check if just Pressed Connect Button
-        if(mx > connectButton.x && mx < connectButton.x+connectButton.width && my > connectButton.y && my < connectButton.y+connectButton.height) {
+        if(connectButton.intersects(mx, my)) {
             if(!isHost) {
                 return new MultiplayerGame(Pong.ipText.getText(), Integer.parseInt(Pong.connectPortText.getText()), winScore);
             }
@@ -131,17 +93,15 @@ public class MultiplayerMenu implements Screen {
                 Pong.ipText.setText("You are host");
         }
         
-        // Check if just Pressed Host Button
-        if(mx > hostButton.x && mx < hostButton.x+hostButton.width && my > hostButton.y && my < hostButton.y+hostButton.height) {
+        if(hostButton.intersects(mx, my)) {
         	if(Pong.hostPortText.getText().equals(""))
         		System.out.println("Please enter a valid port");
         	else
         		return new MultiplayerGame(Integer.parseInt(Pong.hostPortText.getText()), winScore);
         }
         
-        // Check if just Pressed Multiplayer Menu To Main Button
-        if(mx > multiToMainButton.x && mx < multiToMainButton.x+multiToMainButton.width && my > multiToMainButton.y && my < multiToMainButton.y+multiToMainButton.height)
-            return new MainMenu(GWIDTH, GHEIGHT);
+        if(multiToMainButton.intersects(mx, my))
+            return new MainMenu(screenSize);
         
         return this;
 	}

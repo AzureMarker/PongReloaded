@@ -2,7 +2,6 @@ package pongreloaded;
 
 import java.awt.*;
 import java.awt.event.*;
-
 import javax.swing.*;
 import javax.swing.border.Border;
 
@@ -99,7 +98,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         	}
         }
         this.setVisible(true);
-        screen = new MainMenu(GWIDTH, GHEIGHT);
+        screen = new MainMenu(screenSize);
     }
     
     public static void main(String[] args) {
@@ -191,7 +190,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         	this.getContentPane().setBackground(Color.DARK_GRAY);
         
         if(isFinished == true) {
-        	screen = new FinishScreen(GWIDTH, GHEIGHT, winID);
+        	screen = new FinishScreen(screenSize, winID);
         	isFinished = false;
         }
         

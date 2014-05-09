@@ -1,20 +1,11 @@
 package pongreloaded;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import javax.swing.JOptionPane;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javax.swing.*;
 
 /**
  * @author Mcat12
@@ -36,7 +27,6 @@ public class MultiplayerGame implements Screen {
     boolean remoteAcceptedStop = false;
     ServerSocket server;
     Socket socket;
-    MsgHandler msgHandler;
     BufferedReader in;
     PrintWriter out;
     Runnable socketWork;
