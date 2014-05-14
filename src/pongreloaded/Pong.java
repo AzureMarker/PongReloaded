@@ -97,8 +97,8 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         		showFPS = true;
         	}
         }
-        this.setVisible(true);
         screen = new MainMenu(screenSize);
+        this.setVisible(true);
     }
     
     public static void main(String[] args) {
