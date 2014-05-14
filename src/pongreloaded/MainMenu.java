@@ -67,6 +67,7 @@ public class MainMenu implements Screen {
     
     public MainMenu(Dimension screenSize) {
     	this.screenSize = screenSize;
+    	startButton = new Button(150, 100, 100, 25, "Start Game", screenSize);
     	startButton.setText("Start Game");
     	System.out.println("MainMenu First Run");
     }
