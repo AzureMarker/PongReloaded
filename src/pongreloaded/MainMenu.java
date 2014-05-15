@@ -9,20 +9,12 @@ import java.awt.event.*;
 public class MainMenu implements Screen {
 	// Buttons
 	Button startButton;
-    Rectangle diffButton = new Rectangle(85, 185, 100, 25);
-    Rectangle playersButton = new Rectangle(215, 185, 100, 25);
-    Rectangle modeButton = new Rectangle(85, 140, 100, 25);
-    Rectangle scoreButton = new Rectangle(85, 225, 100, 25);
-    Rectangle exitButton = new Rectangle(215, 225, 100, 25);
-    Rectangle multiButton = new Rectangle(215, 140, 100, 25);
-    
-    // Hover
-    boolean diffHover;
-    boolean playersHover;
-    boolean modeHover;
-    boolean scoreHover;
-    boolean exitHover;
-    boolean multiHover;
+    Button diffButton;
+    Button playersButton;
+    Button modeButton;
+    Button scoreButton;
+    Button multiButton;
+    Button exitButton;
     
     // Game
     boolean isFirstRun;
@@ -60,15 +52,26 @@ public class MainMenu implements Screen {
     	this.p1Score = p1Score;
     	this.p2Score = p2Score;
     	isFirstRun = false;
-    	startButton = new Button(150, 100, 100, 25, "Start Game", screenSize);
-    	startButton.setText("Resume");
+    	startButton = new Button(150, 100, 100, 25, "Resume");
+    	diffButton = new Button(85, 185, 100, 25, "Difficulty: " 
+    			);
+    	playersButton = new Button(215, 185, 100, 25, "Players: ");
+    	modeButton = new Button(85, 140, 100, 25, "");
+    	scoreButton = new Button(85, 225, 100, 25, "To Win: ");
+    	multiButton = new Button(215, 140, 100, 25, "Multiplayer");
+    	exitButton = new Button(215, 225, 100, 25, "Exit");
     	System.out.println("MainMenu Full Constructor");
     }
     
     public MainMenu(Dimension screenSize) {
     	this.screenSize = screenSize;
-    	startButton = new Button(150, 100, 100, 25, "Start Game", screenSize);
-    	startButton.setText("Start Game");
+    	startButton = new Button(150, 100, 100, 25, "Start Game");
+    	diffButton = new Button(85, 185, 100, 25, "Difficulty: ");
+    	playersButton = new Button(215, 185, 100, 25, "Players: ");
+    	modeButton = new Button(85, 140, 100, 25, "");
+    	scoreButton = new Button(85, 225, 100, 25, "To Win: ");
+    	multiButton = new Button(215, 140, 100, 25, "Multiplayer");
+    	exitButton = new Button(215, 225, 100, 25, "Exit");
     	System.out.println("MainMenu First Run");
     }
 	
@@ -90,87 +93,50 @@ public class MainMenu implements Screen {
         startButton.draw(g);
         
         // Multiplayer Button
-        if(!multiHover)
-            g.setColor(Color.CYAN);
-        else
-            g.setColor(Color.PINK);
-        g.fillRect(multiButton.x, multiButton.y, multiButton.width, multiButton.height);
-        g.setColor(Color.GRAY);
-        g.drawString("Multiplayer", multiButton.x+20,  multiButton.y+17);
+        multiButton.draw(g);
         
         // Difficulty Button
-        if(!diffHover)
-            g.setColor(Color.CYAN);
-        else
-            g.setColor(Color.PINK);
-        
-        g.fillRect(diffButton.x, diffButton.y-5, diffButton.width, diffButton.height);
-        g.setColor(Color.GRAY);
-        g.drawString("Difficulty:", diffButton.x+7, diffButton.y+12);
         switch(difficulty) {
             case 1:
-                g.drawString("Easy", diffButton.x+63, diffButton.y+12);
+                diffButton.setText("Difficulty: Easy");
                 break;
             case 2:
-                g.drawString("Med", diffButton.x+63, diffButton.y+12);
+                diffButton.setText("Difficulty: Mid");
                 break;
             case 3:
-                g.drawString("Hard", diffButton.x+63, diffButton.y+12);
+                diffButton.setText("Difficulty: Hard");
                 break;
         }
+        diffButton.draw(g);
         
         // Players Button
-        if(!playersHover)
-            g.setColor(Color.CYAN);
-        else
-            g.setColor(Color.PINK);
-        g.fillRect(playersButton.x, playersButton.y-5, playersButton.width, playersButton.height);
-        g.setColor(Color.GRAY);
-        g.drawString("Players:", playersButton.x+8, playersButton.y+12);
         switch(players) {
             case 1:
-                g.drawString("Single", playersButton.x+58, playersButton.y+12);
+                playersButton.setText("Players: Single");
                 break;
             case 2:
-                g.drawString("Multi", playersButton.x+58, playersButton.y+12);
+                playersButton.setText("Players: Multi");
                 break;
         }
+        playersButton.draw(g);
         
         // Mode Button
-        if(!modeHover)
-            g.setColor(Color.CYAN);
-        else
-            g.setColor(Color.PINK);
-        g.fillRect(modeButton.x, modeButton.y, modeButton.width, modeButton.height);
-        g.setColor(Color.GRAY);
-        g.drawString("Mode:", modeButton.x+5, modeButton.y+17);
         switch(mode) {
             case 1:
-                g.drawString("Original", modeButton.x+45, modeButton.y+17);
+                modeButton.setText("Mode: Original");
                 break;
             case 2:
-                g.drawString("Reloaded", modeButton.x+45, modeButton.y+17);
+                modeButton.setText("Mode: Reloaded");
                 break;
         }
+        modeButton.draw(g);
         
         // Score Button
-        if(!scoreHover)
-            g.setColor(Color.CYAN);
-        else
-            g.setColor(Color.PINK);
-        g.fillRect(scoreButton.x, scoreButton.y, scoreButton.width, scoreButton.height);
-        g.setColor(Color.GRAY);
-        g.drawString("To Win:", scoreButton.x+15, scoreButton.y+17);
-        g.drawString(""+winScore, scoreButton.x+61, scoreButton.y+17);
+        scoreButton.setText("Score: " + winScore);
+        scoreButton.draw(g);
         
         // Exit Button
-        if(!exitHover)
-            g.setColor(Color.CYAN);
-        else
-            g.setColor(Color.PINK);
-        g.fillRect(exitButton.x, exitButton.y, exitButton.width, exitButton.height);
-        g.setColor(Color.GRAY);
-        g.drawString("Exit", exitButton.x+38, exitButton.y+17);
+        exitButton.draw(g);
 	}
 	
 	public Screen respondToUserInput(KeyEvent key) {
@@ -189,40 +155,22 @@ public class MainMenu implements Screen {
         startButton.adjustHover(mx, my);
         
         // Check if Hovering over Difficulty Button
-        if(mx > diffButton.x && mx < diffButton.x+diffButton.width && my > diffButton.y && my < diffButton.y+diffButton.height)
-            diffHover = true;
-        else
-            diffHover = false;
+        diffButton.adjustHover(mx, my);
         
         // Check if Hovering over Players Button
-        if(mx > playersButton.x && mx < playersButton.x+playersButton.width && my > playersButton.y && my < playersButton.y+playersButton.height)
-            playersHover = true;
-        else
-            playersHover = false;
+        playersButton.adjustHover(mx, my);
         
         // Check if Hovering over Mode Button
-        if(mx > modeButton.x && mx < modeButton.x+modeButton.width && my > modeButton.y && my < modeButton.y+modeButton.height)
-            modeHover = true;
-        else
-            modeHover = false;
+        modeButton.adjustHover(mx, my);
         
         // Check if Hovering over Score Button
-        if(mx > scoreButton.x && mx < scoreButton.x+scoreButton.width && my > scoreButton.y && my < scoreButton.y+scoreButton.height)
-            scoreHover = true;
-        else
-            scoreHover = false;
-        
-        // Check if Hovering over Exit Button
-        if(mx > exitButton.x && mx < exitButton.x+exitButton.width && my > exitButton.y && my < exitButton.y+exitButton.height)
-            exitHover = true;
-        else
-            exitHover = false;
+        scoreButton.adjustHover(mx, my);
         
         // Check if Hovering over Multiplayer Button
-        if(mx > multiButton.x && mx < multiButton.x+multiButton.width && my > multiButton.y && my < multiButton.y+multiButton.height)
-            multiHover = true;
-        else
-            multiHover = false;
+        multiButton.adjustHover(mx, my);
+        
+        // Check if Hovering over Exit Button
+        exitButton.adjustHover(mx, my);
         
 	    return this;
 	}
@@ -240,14 +188,14 @@ public class MainMenu implements Screen {
 	    }
 	    
 	    // Check if Score Button was pressed
-	    if(mx > scoreButton.x && mx < scoreButton.x+scoreButton.width && my > scoreButton.y && my < scoreButton.y+scoreButton.height) {
+	    if(scoreButton.intersects(mx, my)) {
 	        winScore++;
 	        if(winScore > 100)
 	            winScore = 1;
 	    }
 	    
 	    // Check if Difficulty Button was pressed
-	    if(mx > diffButton.x && mx < diffButton.x+diffButton.width && my > diffButton.y && my < diffButton.y+diffButton.height) {
+	    if(diffButton.intersects(mx, my)) {
 	        switch(difficulty) {
 	            case 1:
 	                ballDiff = 4;
@@ -271,7 +219,7 @@ public class MainMenu implements Screen {
 	    }
 	    
 	    // Check if Players Button was pressed
-	    if(mx > playersButton.x && mx < playersButton.x+playersButton.width && my > playersButton.y && my < playersButton.y+playersButton.height) {
+	    if(playersButton.intersects(mx, my)) {
 	        switch(players) {
 	            case 1:
 	                players = 2;
@@ -283,7 +231,7 @@ public class MainMenu implements Screen {
 	    }
 	    
 	    // Check if Mode Button was pressed
-	    if(mx > modeButton.x && mx < modeButton.x+modeButton.width && my > modeButton.y && my < modeButton.y+modeButton.height) {
+	    if(modeButton.intersects(mx, my)) {
 	        switch(mode) {
 	            case 1:
 	                mode = 2;
@@ -297,13 +245,13 @@ public class MainMenu implements Screen {
 	    }
 	    
 	    // Check if Multiplayer Button was pressed
-	    if(mx > multiButton.x && mx < multiButton.x+multiButton.width && my > multiButton.y && my < multiButton.y+multiButton.height) {
+	    if(multiButton.intersects(mx, my)) {
 	    	Pong.disposeMainMenu = true;
 	    	return new MultiplayerMenu(screenSize, winScore);
 	    }
 	    
 	    // Check if Exit Button was pressed
-        if(mx > exitButton.x && mx < exitButton.x+exitButton.width && my > exitButton.y && my < exitButton.y+exitButton.height)
+        if(exitButton.intersects(mx, my))
             Pong.quit = true;
 	    
 	    return this;
@@ -315,7 +263,7 @@ public class MainMenu implements Screen {
         int mwDir = mouseWheel.getWheelRotation();
 		
 	    // Check if just Scrolled Over Score Button
-        if(mx > scoreButton.x && mx < scoreButton.x+scoreButton.width && my > scoreButton.y && my < scoreButton.y+scoreButton.height) {
+        if(scoreButton.intersects(mx, my)) {
             if(mwDir < 0)
                 winScore++;
             else

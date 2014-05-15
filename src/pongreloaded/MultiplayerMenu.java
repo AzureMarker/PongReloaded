@@ -12,11 +12,6 @@ public class MultiplayerMenu implements Screen {
 	Button hostButton;
 	Button multiToMainButton;
     
-    // Hover
-    boolean connectHover;
-    boolean hostHover;
-    boolean multiToMainHover;
-    
     // Game
     Dimension screenSize;
     int winScore;
@@ -25,9 +20,9 @@ public class MultiplayerMenu implements Screen {
 	public MultiplayerMenu(Dimension screenSize, int winScore) {
 		this.screenSize = screenSize;
 		this.winScore = winScore;
-		connectButton = new Button(50, 170, 100, 25, "Connect", screenSize);
-		hostButton = new Button(250, 140, 100, 25, "Host", screenSize);
-		multiToMainButton = new Button(25, 250, 100, 25, "Back", screenSize);
+		connectButton = new Button(50, 170, 100, 25, "Connect");
+		hostButton = new Button(250, 140, 100, 25, "Host");
+		multiToMainButton = new Button(25, 250, 100, 25, "Back");
 	}
 	
 	public Screens getScreenType() {

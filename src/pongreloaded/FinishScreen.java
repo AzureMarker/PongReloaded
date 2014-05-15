@@ -19,7 +19,7 @@ public class FinishScreen implements Screen {
 	public FinishScreen(Dimension screenSize, int winID) {
 		this.screenSize = screenSize;
 		this.winID = winID;
-		mainMenuButton = new Button(100, 125, 200, 25, "Main Menu", screenSize);
+		mainMenuButton = new Button(100, 125, 200, 25, "Main Menu");
 		System.out.println("Player " + winID + " Won!");
 	}
 	

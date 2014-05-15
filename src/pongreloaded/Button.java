@@ -8,21 +8,19 @@ public class Button {
     private int tx, ty;
     private boolean hover;
     private boolean center;
-    private Dimension screenSize;
     
-    public Button(int x, int y, int width, int height, String text, Dimension screenSize) {
+    public Button(int x, int y, int width, int height, String text) {
         rec = new Rectangle(x, y, width, height);
+        setHover(false);
+        setCenter(true);
         setText(text);
-        hover = false;
-        center = false;
-        this.screenSize = screenSize;
     }
     
     public void draw(Graphics g) {
     	// Center Text
     	if(center) {
     		centerText(g);
-    		center = false;
+    		setCenter(false);
     	}
     	
     	if(!hover)
@@ -32,14 +30,15 @@ public class Button {
         g.fillRect(rec.x, rec.y, rec.width, rec.height);
         g.setFont(new Font("Arial", Font.BOLD, 12));
         g.setColor(Color.GRAY);
-        g.drawString(text, tx, ty);
+        g.drawString(getText(), getTextX(), getTextY());
     }
     
-    private void centerText(Graphics g) {
+    protected void centerText(Graphics g) {
+    	g.setFont(new Font("Arial", Font.BOLD, 12));
     	FontMetrics fm = g.getFontMetrics();
-    	int totalWidth = (fm.stringWidth(text) * 2) + 4;
-    	tx = (int) ((screenSize.width - totalWidth) / 2) + fm.stringWidth(text) + 2;
-        ty = (int) ((screenSize.height - fm.getHeight()) / 2) + fm.getAscent();
+    	int totalWidth = fm.stringWidth(text);
+    	tx = ((rec.width - totalWidth) / 2) + rec.x;
+        ty = rec.y + 17;
     }
     
     public void adjustHover(int x, int y) {
@@ -62,6 +61,19 @@ public class Button {
         return text;
     }
     
+    public void setTextXY(int tx, int ty) {
+    	this.tx = tx;
+    	this.ty = ty;
+    }
+    
+    public int getTextX() {
+    	return tx;
+    }
+    
+    public int getTextY() {
+    	return ty;
+    }
+    
     public void setRectangle(Rectangle rec) {
         this.rec = rec;
         center = true;
@@ -77,6 +89,14 @@ public class Button {
     
     public boolean getHover() {
     	return hover;
+    }
+    
+    public void setCenter(boolean center) {
+    	this.center = center;
+    }
+    
+    public boolean getCenter() {
+    	return center;
     }
     
     public String toString() {

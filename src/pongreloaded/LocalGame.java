@@ -27,8 +27,8 @@ public class LocalGame implements Screen {
     public LocalGame(Dimension screenSize, int ballDiff, int p2Diff, int players, int mode, int winScore, int ballX, int ballY, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score) {
     	this.screenSize = screenSize;
     	this.winScore = winScore;
-    	returnButton = new Button(100, 75, 200, 25, "Return to Game", screenSize);
-    	mainMenuButton = new Button(100, 125, 200, 25, "Main Menu", screenSize);
+    	returnButton = new Button(100, 75, 200, 25, "Return to Game");
+    	mainMenuButton = new Button(100, 125, 200, 25, "Main Menu");
     	b = new Ball(ballX, ballY, p1Y, p2Y, xDir, yDir, p1Score, p2Score, this);
     	b.setDifficulty(ballDiff);
     	b.p2.setDifficulty(p2Diff);
