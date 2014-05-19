@@ -17,7 +17,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     // Multiplayer Text Fields
     static JTextField ipText = new JTextField() {
 		private static final long serialVersionUID = -8131047528678819183L;
-
+		
 		@Override
         public void setBorder(Border border) {
         }
@@ -123,37 +123,15 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     	screen = screen.respondToUserInputHover(mouse);
     }
     
-    public void mouseClicked(MouseEvent mouse) { }
-    
-    public void mouseDragged(MouseEvent mouse) { }
-    
-    public void mouseReleased(MouseEvent mouse) { }
-    
-    public void mouseEntered(MouseEvent mouse) { }
-    
-    public void mouseExited(MouseEvent mouse) { }
-    
     public void mouseWheelMoved(MouseWheelEvent mouseWheel) {
     	screen = screen.respondToUserInput(mouseWheel);
     }
     
     @Override
-	public void windowActivated(WindowEvent window) { }
-	@Override
-	public void windowClosed(WindowEvent window) { }
-	@Override
 	public void windowClosing(WindowEvent window) {
 		screen = screen.windowClosingEvent(window);
 	}
-	@Override
-	public void windowDeactivated(WindowEvent window) { }
-	@Override
-	public void windowDeiconified(WindowEvent window) { }
-	@Override
-	public void windowIconified(WindowEvent window) { }
-	@Override
-	public void windowOpened(WindowEvent window) { }
-    
+	
     @Override
     public void paint(Graphics g) {
         dbImage = createImage(getWidth(), getHeight());
@@ -206,4 +184,16 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         	}
         }
     }
+    
+    public void mouseClicked(MouseEvent mouse) {}
+    public void mouseDragged(MouseEvent mouse) {}
+    public void mouseReleased(MouseEvent mouse) {}
+    public void mouseEntered(MouseEvent mouse) {}
+    public void mouseExited(MouseEvent mouse) {}
+	public void windowActivated(WindowEvent window) {}
+	public void windowClosed(WindowEvent window) {}
+	public void windowDeactivated(WindowEvent window) {}
+	public void windowDeiconified(WindowEvent window) {}
+	public void windowIconified(WindowEvent window) {}
+	public void windowOpened(WindowEvent window) {}
 }
