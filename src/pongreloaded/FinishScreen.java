@@ -2,6 +2,11 @@ package pongreloaded;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
+import java.util.*;
+
+import javax.xml.stream.*;
+import javax.xml.stream.events.*;
 
 /**
  * @author Mcat12
@@ -15,13 +20,116 @@ public class FinishScreen implements Screen {
 	
 	// Winner
 	int winID;
+	ArrayList<Winner> winners;
+	Winner winner;
 	
-	public FinishScreen(Dimension screenSize, int winID) {
+	public FinishScreen(Dimension screenSize, int winID, Winner winner) {
 		this.screenSize = screenSize;
 		this.winID = winID;
+		this.winner = winner;
 		mainMenuButton = new Button(100, 125, 200, 25, "Main Menu");
 		System.out.println("Player " + winID + " Won!");
+		getWinners();
+		try {
+			saveConfig();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void getWinners() {
+		winners = new ArrayList<Winner>();
+		try {
+			XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+			InputStream in = new FileInputStream("leaderboard.xml");
+			XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
+			Winner item = new Winner();
+			
+			while(eventReader.hasNext()) {
+				XMLEvent event = eventReader.nextEvent();
+				
+				if(event.isStartElement()) {
+					if(event.asStartElement().getName().getLocalPart().equals("name")) {
+						event = eventReader.nextEvent();
+						item.setName(event.asCharacters().getData());
+						continue;
+					}
+				}
+				if(event.isStartElement()) {
+					if(event.asStartElement().getName().getLocalPart().equals("score")) {
+						event = eventReader.nextEvent();
+						item.setScore(Integer.parseInt(event.asCharacters()
+								.getData()));
+						continue;
+					}
+				}
+				if(event.isEndElement()) {
+					EndElement endElement = event.asEndElement();
+					if(endElement.getName().getLocalPart().equals("winner")) {
+						winners.add(item);
+						item = new Winner();
+					}
+				}
+			}
+		}
+		catch(FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+		winners.add(winner);
+	}
+	
+	public void saveConfig() throws Exception {
+	    XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+	    XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream("leaderboard.xml"));
+	    XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+	    XMLEvent end = eventFactory.createDTD("\n");
+	    StartDocument startDocument = eventFactory.createStartDocument();
+	    eventWriter.add(startDocument);
+	    
+	    eventWriter.add(eventFactory.createStartElement("", "", "config"));
+	    eventWriter.add(end);
+	    
+	    for(Winner w : winners) {
+	    	createNode(eventWriter, "winner", w);
+	    }
+	    
+	    eventWriter.add(eventFactory.createEndElement("", "", "config"));
+	    eventWriter.add(end);
+	    eventWriter.add(eventFactory.createEndDocument());
+	    eventWriter.close();
+	  }
+
+	  private void createNode(XMLEventWriter eventWriter, String name, Winner value) throws XMLStreamException {
+	    XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+	    XMLEvent end = eventFactory.createDTD("\n");
+	    XMLEvent tab = eventFactory.createDTD("\t");
+	    
+	    eventWriter.add(tab);
+	    eventWriter.add(eventFactory.createStartElement("", "", name));
+	    eventWriter.add(end);
+	    
+	    eventWriter.add(tab);
+	    eventWriter.add(tab);
+	    eventWriter.add(eventFactory.createStartElement("", "", "name"));
+	    eventWriter.add(eventFactory.createCharacters(value.getName()));
+	    eventWriter.add(eventFactory.createEndElement("", "", "name"));
+	    eventWriter.add(end);
+	    
+	    eventWriter.add(tab);
+	    eventWriter.add(tab);
+	    eventWriter.add(eventFactory.createStartElement("", "", "score"));
+	    eventWriter.add(eventFactory.createCharacters(""+value.getScore()));
+	    eventWriter.add(eventFactory.createEndElement("", "", "score"));
+	    eventWriter.add(end);
+	    
+	    eventWriter.add(tab);
+	    eventWriter.add(eventFactory.createEndElement("", "", name));
+	    eventWriter.add(end);
+	  }
 	
 	public void displayOutput(Graphics g) {
 		// Finish Menu

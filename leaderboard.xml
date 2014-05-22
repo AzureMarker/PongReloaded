@@ -1,0 +1,26 @@
+<?xml version="1.0"?><config>
+	<winner>
+		<name>"test"</name>
+		<score>10</score>
+	</winner>
+	<winner>
+		<name>"test2"</name>
+		<score>100</score>
+	</winner>
+	<winner>
+		<name>2</name>
+		<score>1</score>
+	</winner>
+	<winner>
+		<name>1</name>
+		<score>1</score>
+	</winner>
+	<winner>
+		<name>2</name>
+		<score>1</score>
+	</winner>
+	<winner>
+		<name>1</name>
+		<score>1</score>
+	</winner>
+</config>

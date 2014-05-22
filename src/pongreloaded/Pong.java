@@ -58,6 +58,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     static boolean isFinished = false;
     static boolean showFPS = false;
     static int winID;
+    static Winner winner;
     
     // Variables for Screen Size
     int GWIDTH = 400, GHEIGHT = 300;
@@ -168,7 +169,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         	this.getContentPane().setBackground(Color.DARK_GRAY);
         
         if(isFinished == true) {
-        	screen = new FinishScreen(screenSize, winID);
+        	screen = new FinishScreen(screenSize, winID, winner);
         	isFinished = false;
         }
         

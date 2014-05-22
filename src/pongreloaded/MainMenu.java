@@ -53,8 +53,7 @@ public class MainMenu implements Screen {
     	this.p2Score = p2Score;
     	isFirstRun = false;
     	startButton = new Button(150, 100, 100, 25, "Resume");
-    	diffButton = new Button(85, 185, 100, 25, "Difficulty: " 
-    			);
+    	diffButton = new Button(85, 185, 100, 25, "Difficulty: ");
     	playersButton = new Button(215, 185, 100, 25, "Players: ");
     	modeButton = new Button(85, 140, 100, 25, "");
     	scoreButton = new Button(85, 225, 100, 25, "To Win: ");
@@ -65,6 +64,7 @@ public class MainMenu implements Screen {
     
     public MainMenu(Dimension screenSize) {
     	this.screenSize = screenSize;
+    	isFirstRun = true;
     	startButton = new Button(150, 100, 100, 25, "Start Game");
     	diffButton = new Button(85, 185, 100, 25, "Difficulty: ");
     	playersButton = new Button(215, 185, 100, 25, "Players: ");

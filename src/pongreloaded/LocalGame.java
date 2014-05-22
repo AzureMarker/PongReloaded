@@ -62,22 +62,18 @@ public class LocalGame implements Screen {
     }
     
     public boolean isFinished() {
-        if(b.p1Score >= winScore) {
+        if(b.p1Score >= winScore)
             return true;
-        }
-        if(b.p2Score >= winScore) {
+        if(b.p2Score >= winScore)
             return true;
-        }
         return false;
     }
     
     public int getWinner() {
-    	if(b.p1Score >= winScore) {
+    	if(b.p1Score >= winScore)
             return 1;
-        }
-        if(b.p2Score >= winScore) {
+        if(b.p2Score >= winScore)
             return 2;
-        }
         return 0;
     }
     
@@ -109,6 +105,10 @@ public class LocalGame implements Screen {
         // Check if Anyone Won
         if(isFinished() == true) {
         	Pong.winID = getWinner();
+        	if(Pong.winID == 1)
+        		Pong.winner = new Winner(""+Pong.winID, b.p1Score);
+        	else
+        		Pong.winner = new Winner(""+Pong.winID, b.p2Score);
         	Pong.isFinished = true;
         }
 	}
