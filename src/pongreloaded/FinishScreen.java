@@ -27,9 +27,24 @@ public class FinishScreen implements Screen {
 		this.screenSize = screenSize;
 		this.winID = winID;
 		this.winner = winner;
-		mainMenuButton = new Button(100, 125, 200, 25, "Main Menu");
+		mainMenuButton = new Button(100, 275, 200, 25, "Main Menu");
 		System.out.println("Player " + winID + " Won!");
+		setupLeaderboard();
+	}
+	
+	/**
+	 * Sets up the winners ArrayList
+	 */
+	public void setupLeaderboard() {
 		getWinners();
+		System.out.println(winners);
+		Collections.sort(winners);
+		System.out.println(winners);
+		if(winners.size() > 10) {
+			while(winners.size() > 10) {
+				winners.remove(winners.size()-1);
+			}
+		}
 		try {
 			saveConfig();
 		}
@@ -38,7 +53,9 @@ public class FinishScreen implements Screen {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
+	/**
+	 * Reads the file and writes to the winners ArrayList
+	 */
 	public void getWinners() {
 		winners = new ArrayList<Winner>();
 		try {
@@ -82,6 +99,11 @@ public class FinishScreen implements Screen {
 		winners.add(winner);
 	}
 	
+	/**
+	 * Saves the file from winners ArrayList
+	 * 
+	 * @throws Exception
+	 */
 	public void saveConfig() throws Exception {
 	    XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 	    XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream("leaderboard.xml"));
@@ -89,7 +111,7 @@ public class FinishScreen implements Screen {
 	    XMLEvent end = eventFactory.createDTD("\n");
 	    StartDocument startDocument = eventFactory.createStartDocument();
 	    eventWriter.add(startDocument);
-	    
+	    eventWriter.add(end);
 	    eventWriter.add(eventFactory.createStartElement("", "", "config"));
 	    eventWriter.add(end);
 	    
@@ -101,37 +123,46 @@ public class FinishScreen implements Screen {
 	    eventWriter.add(end);
 	    eventWriter.add(eventFactory.createEndDocument());
 	    eventWriter.close();
-	  }
-
-	  private void createNode(XMLEventWriter eventWriter, String name, Winner value) throws XMLStreamException {
-	    XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-	    XMLEvent end = eventFactory.createDTD("\n");
-	    XMLEvent tab = eventFactory.createDTD("\t");
-	    
-	    eventWriter.add(tab);
-	    eventWriter.add(eventFactory.createStartElement("", "", name));
-	    eventWriter.add(end);
-	    
-	    eventWriter.add(tab);
-	    eventWriter.add(tab);
-	    eventWriter.add(eventFactory.createStartElement("", "", "name"));
-	    eventWriter.add(eventFactory.createCharacters(value.getName()));
-	    eventWriter.add(eventFactory.createEndElement("", "", "name"));
-	    eventWriter.add(end);
-	    
-	    eventWriter.add(tab);
-	    eventWriter.add(tab);
-	    eventWriter.add(eventFactory.createStartElement("", "", "score"));
-	    eventWriter.add(eventFactory.createCharacters(""+value.getScore()));
-	    eventWriter.add(eventFactory.createEndElement("", "", "score"));
-	    eventWriter.add(end);
-	    
-	    eventWriter.add(tab);
-	    eventWriter.add(eventFactory.createEndElement("", "", name));
-	    eventWriter.add(end);
-	  }
+	}
 	
+	/**
+	 * Creates a new node
+	 * 
+	 * @param eventWriter
+	 * @param name
+	 * @param value
+	 * @throws XMLStreamException
+	 */
+	private void createNode(XMLEventWriter eventWriter, String name, Winner value) throws XMLStreamException {
+		XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+		XMLEvent end = eventFactory.createDTD("\n");
+		XMLEvent tab = eventFactory.createDTD("\t");
+
+		eventWriter.add(tab);
+		eventWriter.add(eventFactory.createStartElement("", "", name));
+		eventWriter.add(end);
+
+		eventWriter.add(tab);
+		eventWriter.add(tab);
+		eventWriter.add(eventFactory.createStartElement("", "", "name"));
+		eventWriter.add(eventFactory.createCharacters(value.getName()));
+		eventWriter.add(eventFactory.createEndElement("", "", "name"));
+		eventWriter.add(end);
+
+		eventWriter.add(tab);
+		eventWriter.add(tab);
+		eventWriter.add(eventFactory.createStartElement("", "", "score"));
+		eventWriter.add(eventFactory.createCharacters("" + value.getScore()));
+		eventWriter.add(eventFactory.createEndElement("", "", "score"));
+		eventWriter.add(end);
+
+		eventWriter.add(tab);
+		eventWriter.add(eventFactory.createEndElement("", "", name));
+		eventWriter.add(end);
+	}
+
 	public void displayOutput(Graphics g) {
+		displayGrid(g);
 		// Finish Menu
         g.setFont(new Font("Arial", Font.BOLD, 18));
         g.setColor(Color.WHITE);
@@ -139,6 +170,38 @@ public class FinishScreen implements Screen {
         
         // Main Menu Button
         mainMenuButton.draw(g);
+        
+        // Leaderboard
+        g.setColor(Color.LIGHT_GRAY);
+        g.fillRect(100, 100, 200, 150);
+        String placeholder = "%-15s %d";
+        g.setColor(Color.CYAN);
+        for(int i = 0; i < winners.size(); i++) {
+        	if(i % 2 == 0) {
+        		//g.drawString(String.format(placeholder, winners.get(i).getName(), winners.get(i).getScore()), 105, (i*16)+115);
+        		g.drawString(winners.get(i).getName(), 105, (i*16)+115);
+        		g.drawString(""+winners.get(i).getScore(), 150, (i*16)+115);
+        	}
+        	else {
+        		//g.drawString("|" + String.format(placeholder, winners.get(i).getName(), winners.get(i).getScore()), 200, (i*16)+99);
+        		g.drawString(winners.get(i).getName(), 200, (i*16)+99);
+        		g.drawString(""+winners.get(i).getScore(), 250, (i*16)+99);
+        	}
+        }
+	}
+	
+	/**
+	 * Shows a grid with 50x50 blocks
+	 * @param g
+	 */
+	public void displayGrid(Graphics g) {
+		g.setColor(Color.GRAY);
+		for(int i = 0; i < screenSize.width; i = i + 50) {
+			g.drawLine(i, 0, i, screenSize.height);
+		}
+		for(int i = 0; i < screenSize.height; i = i + 50) {
+			g.drawLine(0, i, screenSize.width, i);
+		}
 	}
 	
 	public Screens getScreenType() {

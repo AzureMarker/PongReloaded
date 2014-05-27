@@ -31,6 +31,7 @@ public class LocalGame implements Screen {
     	mainMenuButton = new Button(100, 125, 200, 25, "Main Menu");
     	b = new Ball(ballX, ballY, p1Y, p2Y, xDir, yDir, p1Score, p2Score, this);
     	b.setDifficulty(ballDiff);
+    	b.p1.setDifficulty(p2Diff);
     	b.p2.setDifficulty(p2Diff);
     	b.p2.setPlayers(players);
     	b.p1.setMode(mode);
@@ -49,10 +50,13 @@ public class LocalGame implements Screen {
     	this.screenSize = screenSize;
     	this.winScore = winScore;
     	b = new Ball(193, 143, true, this);
+    	returnButton = new Button(100, 75, 200, 25, "Return to Game");
+    	mainMenuButton = new Button(100, 125, 200, 25, "Main Menu");
     	ball = new Thread(b);
     	p1 = new Thread(b.p1);
     	p2 = new Thread(b.p2);
     	b.setDifficulty(ballDiff);
+    	b.p1.setDifficulty(p2Diff);
     	b.p2.setDifficulty(p2Diff);
     	b.p2.setPlayers(players);
     	b.p1.setMode(mode);

@@ -170,7 +170,6 @@ public class Ball implements Runnable {
         isPaused = sp;
     }
     
-    
     public void stop() {
     	stop = true;
     }
@@ -178,8 +177,8 @@ public class Ball implements Runnable {
     @Override
     public void run() {
         try{
-        	while(stop == false) {
-        		while(isPaused == false) {
+        	while(!stop) {
+        		while(!isPaused) {
         			move();
     				Thread.sleep(difficulty);
         		}

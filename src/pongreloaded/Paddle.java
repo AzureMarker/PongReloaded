@@ -237,7 +237,7 @@ public class Paddle implements Runnable {
     @Override
     public void run() {
         try{
-            while(stop == false) {
+            while(!stop) {
                 while(!isPaused) {
                     move();
                     Thread.sleep(difficulty);

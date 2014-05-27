@@ -3,7 +3,7 @@ package pongreloaded;
 /**
  * @author Mcat12
  */
-public class Winner {
+public class Winner implements Comparable<Winner>{
 	private String name;
 	private int score;
 	
@@ -12,6 +12,12 @@ public class Winner {
 	public Winner(String name, int score) {
 		this.name = name;
 		this.score = score;
+	}
+	
+	public int compareTo(Winner other) {
+		if(other.getScore() > this.getScore())
+			return 0;
+		return 1;
 	}
 	
 	public String getName() {

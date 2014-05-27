@@ -200,19 +200,19 @@ public class MainMenu implements Screen {
 	            case 1:
 	                ballDiff = 4;
 	                if(players == 1)
-	                    p2Diff = 6;
+	                    p2Diff = 4;
 	                difficulty = 2;
 	                break;
 	            case 2:
 	                ballDiff = 2;
 	                if(players == 1)
-	                    p2Diff = 3;
+	                    p2Diff = 2;
 	                difficulty = 3;
 	                break;
 	            case 3:
 	                ballDiff = 8;
 	                if(players == 1)
-	                    p2Diff = 9;
+	                    p2Diff = 8;
 	                difficulty = 1;
 	                break;
 	        }

@@ -176,6 +176,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         if(showFPS == true) {
         	beforeTime = System.nanoTime();
         	now = System.currentTimeMillis();
+        	g.setColor(Color.GRAY);
         	g.drawString(""+framesCountAvg, 190, 280);
         	framesCount++;
         	if(now - framesTimer > 1000) {
