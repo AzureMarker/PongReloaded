@@ -16,8 +16,10 @@ public class Winner implements Comparable<Winner>{
 	
 	public int compareTo(Winner other) {
 		if(other.getScore() > this.getScore())
-			return 0;
-		return 1;
+			return -1;
+		if(other.getScore() < this.getScore())
+			return 1;
+		return 0;
 	}
 	
 	public String getName() {

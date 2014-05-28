@@ -37,9 +37,8 @@ public class FinishScreen implements Screen {
 	 */
 	public void setupLeaderboard() {
 		getWinners();
-		System.out.println(winners);
 		Collections.sort(winners);
-		System.out.println(winners);
+		Collections.reverse(winners);
 		if(winners.size() > 10) {
 			while(winners.size() > 10) {
 				winners.remove(winners.size()-1);
@@ -174,18 +173,17 @@ public class FinishScreen implements Screen {
         // Leaderboard
         g.setColor(Color.LIGHT_GRAY);
         g.fillRect(100, 100, 200, 150);
-        String placeholder = "%-15s %d";
         g.setColor(Color.CYAN);
         for(int i = 0; i < winners.size(); i++) {
         	if(i % 2 == 0) {
         		//g.drawString(String.format(placeholder, winners.get(i).getName(), winners.get(i).getScore()), 105, (i*16)+115);
         		g.drawString(winners.get(i).getName(), 105, (i*16)+115);
-        		g.drawString(""+winners.get(i).getScore(), 150, (i*16)+115);
+        		g.drawString(""+winners.get(i).getScore(), 170, (i*16)+115);
         	}
         	else {
         		//g.drawString("|" + String.format(placeholder, winners.get(i).getName(), winners.get(i).getScore()), 200, (i*16)+99);
         		g.drawString(winners.get(i).getName(), 200, (i*16)+99);
-        		g.drawString(""+winners.get(i).getScore(), 250, (i*16)+99);
+        		g.drawString(""+winners.get(i).getScore(), 270, (i*16)+99);
         	}
         }
 	}

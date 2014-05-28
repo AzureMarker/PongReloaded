@@ -2,6 +2,7 @@ package pongreloaded;
 
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
 
 /**
  * @author Mcat12
@@ -109,10 +110,14 @@ public class LocalGame implements Screen {
         // Check if Anyone Won
         if(isFinished() == true) {
         	Pong.winID = getWinner();
+        	String name = JOptionPane.showInputDialog(null,
+  				  "What is your name?",
+  				  "Enter your name",
+  				  JOptionPane.QUESTION_MESSAGE);
         	if(Pong.winID == 1)
-        		Pong.winner = new Winner(""+Pong.winID, b.p1Score);
+        		Pong.winner = new Winner(name, b.p1Score);
         	else
-        		Pong.winner = new Winner(""+Pong.winID, b.p2Score);
+        		Pong.winner = new Winner(name, b.p2Score);
         	Pong.isFinished = true;
         }
 	}

@@ -19,22 +19,19 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
 		private static final long serialVersionUID = -8131047528678819183L;
 		
 		@Override
-        public void setBorder(Border border) {
-        }
+        public void setBorder(Border border) {}
     };
     static JTextField hostPortText = new JTextField() {
 		private static final long serialVersionUID = 1627939752505205466L;
 		
 		@Override
-        public void setBorder(Border border) {
-        }
+        public void setBorder(Border border) {}
     };
     static JTextField connectPortText = new JTextField() {
 		private static final long serialVersionUID = -9217986345323034088L;
 
 		@Override
-        public void setBorder(Border border) {
-        }
+        public void setBorder(Border border) {}
     };
     
     // Game
