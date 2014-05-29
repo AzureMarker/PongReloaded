@@ -161,7 +161,6 @@ public class FinishScreen implements Screen {
 	}
 
 	public void displayOutput(Graphics g) {
-		displayGrid(g);
 		// Finish Menu
         g.setFont(new Font("Arial", Font.BOLD, 18));
         g.setColor(Color.WHITE);
