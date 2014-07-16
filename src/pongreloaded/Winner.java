@@ -7,8 +7,6 @@ public class Winner implements Comparable<Winner>{
 	private String name;
 	private int score;
 	
-	public Winner() {}
-	
 	public Winner(String name, int score) {
 		this.name = name;
 		this.score = score;
@@ -39,7 +37,6 @@ public class Winner implements Comparable<Winner>{
 	}
 	
 	public String toString() {
-		return "Name: " + name +
-			   " Score: " + score;
+		return "Name: " + name + " Score: " + score;
 	}
 }

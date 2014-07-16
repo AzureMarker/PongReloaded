@@ -8,8 +8,9 @@ import javax.swing.border.Border;
 /**
  * @author Mcat12
  */
-public class Pong extends JFrame implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, WindowListener  {
+public class Pong extends JFrame implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, WindowListener {
 	private static final long serialVersionUID = -6694074482949248838L;
+	
 	// Double Buffering
     Image dbImage;
     Graphics dbg;

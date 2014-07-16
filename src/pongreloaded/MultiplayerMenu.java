@@ -8,9 +8,9 @@ import java.awt.event.*;
  */
 public class MultiplayerMenu implements Screen {
 	// Buttons
-	Button connectButton;
-	Button hostButton;
-	Button multiToMainButton;
+	Button connectButton = new Button(50, 170, 100, 25, "Connect");
+	Button hostButton = new Button(250, 140, 100, 25, "Host");
+	Button multiToMainButton = new Button(25, 250, 100, 25, "Back");
     
     // Game
     Dimension screenSize;
@@ -20,9 +20,6 @@ public class MultiplayerMenu implements Screen {
 	public MultiplayerMenu(Dimension screenSize, int winScore) {
 		this.screenSize = screenSize;
 		this.winScore = winScore;
-		connectButton = new Button(50, 170, 100, 25, "Connect");
-		hostButton = new Button(250, 140, 100, 25, "Host");
-		multiToMainButton = new Button(25, 250, 100, 25, "Back");
 	}
 	
 	public Screens getScreenType() {
@@ -43,17 +40,15 @@ public class MultiplayerMenu implements Screen {
         g.setFont(new Font("Arial", Font.BOLD, 12));
         g.drawString("Enter Ip Address & Port", 37, 100);
         
-        // Connect Button
+        // Button
         connectButton.draw(g);
         
         // Host Port Input
         g.setColor(Color.WHITE);
         g.drawString("Enter Port Number", 250, 100);
         
-        // Host Button
+        // Buttons
         hostButton.draw(g);
-        
-        // Back Button (Multiplayer to Main)
         multiToMainButton.draw(g);
 	}
 	

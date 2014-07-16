@@ -73,15 +73,11 @@ public class MultiplayerGame implements Screen {
         pM.start();
         
         // Send Variables to Player
-        sendVarsToServer();
+        sendVars();
     }
 	
 	public boolean isFinished() {
-        if(bClient.p1Score >= winScore)
-            return true;
-        if(bClient.p2Score >= winScore)
-            return true;
-        return false;
+		return bClient.p1Score >= winScore || bClient.p2Score >= winScore ? true : false;
     }
     
     public int getWinner() {
@@ -124,7 +120,7 @@ public class MultiplayerGame implements Screen {
         System.out.println("Client Initializing...");
         try {
 			socket = new Socket(ip, port);
-			System.out.println("Connected to Server, setting up I/O");
+			System.out.println("Connected to Host, setting up I/O");
 			setUpIO();
 			getPlayerNumber();
 			socket.setSoTimeout(1000);
@@ -168,7 +164,7 @@ public class MultiplayerGame implements Screen {
 		if(!isHost) {
 			System.out.println("Waiting for other player to choose number...");
 			while(otherPlayerNum != 0 && otherPlayerNum != 1) {
-				sendNBVarsToServer();
+				sendNBVars();
 			}
 		}
 		switch(playerNum) {
@@ -190,20 +186,20 @@ public class MultiplayerGame implements Screen {
 				}
 				break;
 		}
-		System.out.println("Got number, sending to server");
-		sendVarsToServer();
+		System.out.println("Got number, sending to host");
+		sendVars();
 		System.out.println("Sent number, waiting for player");
 		if(isHost) {
 			System.out.println("Waiting for other player to choose number...");
 			while(otherPlayerNum != 0 && otherPlayerNum != 1) {
-				sendNBVarsToServer();
+				sendNBVars();
 			}
 		}
 		if(playerNum == 0)
 			bClient.p1.setPlayerNum(playerNum);
 		if(playerNum == 1)
 			bClient.p2.setPlayerNum(playerNum);
-		sendNBVarsToServer();
+		sendNBVars();
     }
     
     public void setUpIO() {
@@ -264,7 +260,7 @@ public class MultiplayerGame implements Screen {
 									getUpdatedScore();
 									break;
 								case "stop":
-									System.out.println("Server says to stop");
+									System.out.println("Host says to stop");
 									acceptedStop = true;
 									acceptStopCommand();
 									System.out.println("Sent acceptedStop, stopping serverWork and closing connection");
@@ -273,7 +269,7 @@ public class MultiplayerGame implements Screen {
 									System.exit(0);
 									break;
 								case "acceptStop":
-									System.out.println("Server accepted stop, stopping serverWork");
+									System.out.println("Host accepted stop, stopping serverWork");
 									remoteAcceptedStop = true;
 									stop();
 							}
@@ -319,7 +315,7 @@ public class MultiplayerGame implements Screen {
 		}
     }
     
-    public void sendVarsToServer() {
+    public void sendVars() {
         if(isHost) {
         	msgBody[0] = bClient.p1.getY();
         	msgBody[1] = bClient.p1.getYDirection();
@@ -345,7 +341,7 @@ public class MultiplayerGame implements Screen {
         }
     }
     
-    public void sendNBVarsToServer() {
+    public void sendNBVars() {
     	if(isHost)
     		msgBody[0] = winScore;
     	msgBody[1] = playerNum;
@@ -372,7 +368,7 @@ public class MultiplayerGame implements Screen {
         }
     }
     
-    public void tellServerToStop() {
+    public void tellHostToStop() {
     	try {
     		out.println("stop," + Arrays.toString(msgBody));
     	}
@@ -416,9 +412,9 @@ public class MultiplayerGame implements Screen {
         g.drawString(""+bClient.p2Score, 370, 50);
         
         // Send info to other player
-        sendVarsToServer();
+        sendVars();
         if(isHost)
-        	sendUpdatedScore();
+        	updateScore();
 	}
 	
 	public Screens getScreenType() {
@@ -432,12 +428,14 @@ public class MultiplayerGame implements Screen {
 	public Screen respondToUserInput(KeyEvent key) {
 		bClient.p1.keyPressed(key);
         bClient.p2.keyPressed(key);
+        
         return this;
 	}
 	
 	public Screen respondToUserInputReleased(KeyEvent key) {
 		bClient.p1.keyReleased(key);
         bClient.p2.keyReleased(key);
+        
         return this;
 	}
 	
@@ -458,12 +456,13 @@ public class MultiplayerGame implements Screen {
 			if(isHost)
 				System.out.println("Telling Client to stop");
 			else
-				System.out.println("Telling Server to stop");
-			tellServerToStop();
-			System.out.println("Waiting for server's response...");
+				System.out.println("Telling Host to stop");
+			tellHostToStop();
+			System.out.println("Waiting for host's response...");
 			while(!remoteAcceptedStop) { }
 			closeConnection();
 		}
+		
 		return this;
 	}
 }

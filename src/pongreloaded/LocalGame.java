@@ -9,8 +9,8 @@ import javax.swing.*;
  */
 public class LocalGame implements Screen {
 	// Buttons
-	Button returnButton;
-    Button mainMenuButton;
+	Button returnButton = new Button(100, 75, 200, 25, "Return to Game");
+    Button mainMenuButton = new Button(100, 125, 200, 25, "Main Menu");
 	
 	// Game
     Ball b;
@@ -28,8 +28,6 @@ public class LocalGame implements Screen {
     public LocalGame(Dimension screenSize, int ballDiff, int p2Diff, int players, int mode, int winScore, int ballX, int ballY, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score) {
     	this.screenSize = screenSize;
     	this.winScore = winScore;
-    	returnButton = new Button(100, 75, 200, 25, "Return to Game");
-    	mainMenuButton = new Button(100, 125, 200, 25, "Main Menu");
     	b = new Ball(ballX, ballY, p1Y, p2Y, xDir, yDir, p1Score, p2Score, this);
     	b.setDifficulty(ballDiff);
     	b.p1.setDifficulty(p2Diff);
@@ -51,8 +49,6 @@ public class LocalGame implements Screen {
     	this.screenSize = screenSize;
     	this.winScore = winScore;
     	b = new Ball(193, 143, true, this);
-    	returnButton = new Button(100, 75, 200, 25, "Return to Game");
-    	mainMenuButton = new Button(100, 125, 200, 25, "Main Menu");
     	ball = new Thread(b);
     	p1 = new Thread(b.p1);
     	p2 = new Thread(b.p2);
@@ -62,16 +58,12 @@ public class LocalGame implements Screen {
     	b.p2.setPlayers(players);
     	b.p1.setMode(mode);
     	b.p2.setMode(mode);
-    	System.out.println("Starting First LocalGame");
+    	System.out.println("Starting Fresh LocalGame");
     	startLocalGame();
     }
     
     public boolean isFinished() {
-        if(b.p1Score >= winScore)
-            return true;
-        if(b.p2Score >= winScore)
-            return true;
-        return false;
+    	return b.p1Score >= winScore || b.p2Score >= winScore ? true : false;
     }
     
     public int getWinner() {
@@ -130,19 +122,14 @@ public class LocalGame implements Screen {
 			g.setColor(new Color(0f,0f,0f,0.3f));
 	        g.fillRect(0,0, screenSize.width, screenSize.height);
 	        
-	        // Return Button
+	        // Buttons
 	        returnButton.draw(g);
-	        
-	        // Main Menu Button
 	        mainMenuButton.draw(g);
 		}
 	}
 	
 	public Screens getScreenType() {
-		if(isPaused == true)
-			return Screens.LOCALPAUSE;
-		else
-			return Screens.LOCALGAME;
+		return isPaused == true ? Screens.LOCALPAUSE : Screens.LOCALGAME;
 	}
 	
 	public Screen getScreen() {
@@ -161,7 +148,7 @@ public class LocalGame implements Screen {
         	b.p1.setPaused(true);
         	b.p2.setPaused(true);
         }
-        else if(isPaused = true) {
+        else {
         	isPaused = false;
         	b.setPaused(false);
         	b.p1.setPaused(false);
@@ -172,19 +159,21 @@ public class LocalGame implements Screen {
 	public Screen respondToUserInput(KeyEvent key) {
 		b.p1.keyPressed(key);
         b.p2.keyPressed(key);
-        try{
+        try {
             menuKeyHandler(key);
         }
         catch(InterruptedException ie) {
             System.out.println("Error: " + ie.getMessage());
             System.exit(-1);
         }
+        
         return this;
 	}
 	
 	public Screen respondToUserInputReleased(KeyEvent key) {
 		b.p1.keyReleased(key);
         b.p2.keyReleased(key);
+        
         return this;
 	}
 	
@@ -193,14 +182,10 @@ public class LocalGame implements Screen {
 			int mx = mouse.getX();
 	        int my = mouse.getY();
 	        
-			// Check if Hovering over Return Button
             returnButton.adjustHover(mx, my);
-            
-            // Check if Hovering over Main Menu Button
             mainMenuButton.adjustHover(mx, my);
 		}
-		else
-			return this;
+		
 		return this;
 	}
 	
@@ -209,7 +194,6 @@ public class LocalGame implements Screen {
 			int mx = mouse.getX();
 	        int my = mouse.getY();
             
-            // Check if just Pressed Return Button
             if(returnButton.intersects(mx, my)) {
                 try{
                     switchLocalPause();
@@ -220,7 +204,6 @@ public class LocalGame implements Screen {
                 }
             }
             
-            // Check if just Pressed Main Menu Button
             if(mainMenuButton.intersects(mx, my)) {
             	b.p1.stop();
             	b.p2.stop();
@@ -228,8 +211,7 @@ public class LocalGame implements Screen {
                 return new MainMenu(screenSize, b.difficulty, b.p2.difficulty, b.p2.players, b.p1.mode, b.winScore, b.getX(), b.getY(), b.p1.getY(), b.p2.getY(), b.xDirection, b.yDirection, b.p1Score, b.p2Score);
             }
 		}
-		else
-			return this;
+		
 		return this;
 	}
 	

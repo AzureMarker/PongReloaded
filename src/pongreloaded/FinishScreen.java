@@ -13,7 +13,7 @@ import javax.xml.stream.events.*;
  */
 public class FinishScreen implements Screen {
 	// Button
-	Button mainMenuButton;
+	Button mainMenuButton = new Button(100, 275, 200, 25, "Main Menu");
 	
 	// Display
 	Dimension screenSize;
@@ -27,7 +27,6 @@ public class FinishScreen implements Screen {
 		this.screenSize = screenSize;
 		this.winID = winID;
 		this.winner = winner;
-		mainMenuButton = new Button(100, 275, 200, 25, "Main Menu");
 		System.out.println("Player " + winID + " Won!");
 		setupLeaderboard();
 	}
@@ -61,7 +60,7 @@ public class FinishScreen implements Screen {
 			XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 			InputStream in = new FileInputStream("leaderboard.xml");
 			XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
-			Winner item = new Winner();
+			Winner item = new Winner("", 0);
 			
 			while(eventReader.hasNext()) {
 				XMLEvent event = eventReader.nextEvent();
@@ -85,7 +84,7 @@ public class FinishScreen implements Screen {
 					EndElement endElement = event.asEndElement();
 					if(endElement.getName().getLocalPart().equals("winner")) {
 						winners.add(item);
-						item = new Winner();
+						item = new Winner("", 0);
 					}
 				}
 			}
@@ -100,8 +99,6 @@ public class FinishScreen implements Screen {
 	
 	/**
 	 * Saves the file from winners ArrayList
-	 * 
-	 * @throws Exception
 	 */
 	public void saveConfig() throws Exception {
 	    XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
@@ -126,11 +123,6 @@ public class FinishScreen implements Screen {
 	
 	/**
 	 * Creates a new node
-	 * 
-	 * @param eventWriter
-	 * @param name
-	 * @param value
-	 * @throws XMLStreamException
 	 */
 	private void createNode(XMLEventWriter eventWriter, String name, Winner value) throws XMLStreamException {
 		XMLEventFactory eventFactory = XMLEventFactory.newInstance();
@@ -166,7 +158,7 @@ public class FinishScreen implements Screen {
         g.setColor(Color.WHITE);
         g.drawString("Player " + winID + " Won the Game!", 95, 75);
         
-        // Main Menu Button
+        // Button
         mainMenuButton.draw(g);
         
         // Leaderboard
@@ -175,12 +167,10 @@ public class FinishScreen implements Screen {
         g.setColor(Color.CYAN);
         for(int i = 0; i < winners.size(); i++) {
         	if(i % 2 == 0) {
-        		//g.drawString(String.format(placeholder, winners.get(i).getName(), winners.get(i).getScore()), 105, (i*16)+115);
         		g.drawString(winners.get(i).getName(), 105, (i*16)+115);
         		g.drawString(""+winners.get(i).getScore(), 170, (i*16)+115);
         	}
         	else {
-        		//g.drawString("|" + String.format(placeholder, winners.get(i).getName(), winners.get(i).getScore()), 200, (i*16)+99);
         		g.drawString(winners.get(i).getName(), 200, (i*16)+99);
         		g.drawString(""+winners.get(i).getScore(), 270, (i*16)+99);
         	}
@@ -189,7 +179,6 @@ public class FinishScreen implements Screen {
 	
 	/**
 	 * Shows a grid with 50x50 blocks
-	 * @param g
 	 */
 	public void displayGrid(Graphics g) {
 		g.setColor(Color.GRAY);
@@ -221,7 +210,6 @@ public class FinishScreen implements Screen {
 		int mx = mouse.getX();
         int my = mouse.getY();
 		
-		// Check if Hovering over Main Menu Button
         mainMenuButton.adjustHover(mx, my);
 		
 		return this;
@@ -231,9 +219,9 @@ public class FinishScreen implements Screen {
 		int mx = mouse.getX();
         int my = mouse.getY();
 		
-		// Check if just Pressed Main Menu Button
         if(mainMenuButton.intersects(mx, my))
             return new MainMenu(screenSize);
+        
 		return this;
 	}
 	

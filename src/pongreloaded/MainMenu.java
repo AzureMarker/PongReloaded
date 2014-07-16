@@ -9,12 +9,12 @@ import java.awt.event.*;
 public class MainMenu implements Screen {
 	// Buttons
 	Button startButton;
-    Button diffButton;
-    Button playersButton;
-    Button modeButton;
-    Button scoreButton;
-    Button multiButton;
-    Button exitButton;
+    Button diffButton = new Button(85, 185, 100, 25, "Difficulty: ");
+    Button playersButton = new Button(215, 185, 100, 25, "Players: ");
+    Button modeButton = new Button(85, 140, 100, 25, "");
+    Button scoreButton = new Button(85, 225, 100, 25, "To Win: ");
+    Button multiButton = new Button(215, 140, 100, 25, "Multiplayer");
+    Button exitButton = new Button(215, 225, 100, 25, "Exit");
     
     // Game
     boolean isFirstRun;
@@ -53,26 +53,14 @@ public class MainMenu implements Screen {
     	this.p2Score = p2Score;
     	isFirstRun = false;
     	startButton = new Button(150, 100, 100, 25, "Resume");
-    	diffButton = new Button(85, 185, 100, 25, "Difficulty: ");
-    	playersButton = new Button(215, 185, 100, 25, "Players: ");
-    	modeButton = new Button(85, 140, 100, 25, "");
-    	scoreButton = new Button(85, 225, 100, 25, "To Win: ");
-    	multiButton = new Button(215, 140, 100, 25, "Multiplayer");
-    	exitButton = new Button(215, 225, 100, 25, "Exit");
     	System.out.println("MainMenu Full Constructor");
     }
     
     public MainMenu(Dimension screenSize) {
     	this.screenSize = screenSize;
     	isFirstRun = true;
-    	startButton = new Button(150, 100, 100, 25, "Start Game");
-    	diffButton = new Button(85, 185, 100, 25, "Difficulty: ");
-    	playersButton = new Button(215, 185, 100, 25, "Players: ");
-    	modeButton = new Button(85, 140, 100, 25, "");
-    	scoreButton = new Button(85, 225, 100, 25, "To Win: ");
-    	multiButton = new Button(215, 140, 100, 25, "Multiplayer");
-    	exitButton = new Button(215, 225, 100, 25, "Exit");
-    	System.out.println("MainMenu First Run");
+    	startButton = new Button(150, 100, 100, 25, "Start");
+    	System.out.println("MainMenu Fresh Run");
     }
 	
     public Screens getScreenType() {
@@ -89,13 +77,10 @@ public class MainMenu implements Screen {
         g.setColor(Color.WHITE);
         g.drawString("Pong Reloaded", 108, 75);
         
-        // Start Button
+        // Buttons
         startButton.draw(g);
-        
-        // Multiplayer Button
         multiButton.draw(g);
         
-        // Difficulty Button
         switch(difficulty) {
             case 1:
                 diffButton.setText("Difficulty: Easy");
@@ -109,7 +94,6 @@ public class MainMenu implements Screen {
         }
         diffButton.draw(g);
         
-        // Players Button
         switch(players) {
             case 1:
                 playersButton.setText("Players: Single");
@@ -120,7 +104,6 @@ public class MainMenu implements Screen {
         }
         playersButton.draw(g);
         
-        // Mode Button
         switch(mode) {
             case 1:
                 modeButton.setText("Mode: Original");
@@ -131,11 +114,8 @@ public class MainMenu implements Screen {
         }
         modeButton.draw(g);
         
-        // Score Button
         scoreButton.setText("Score: " + winScore);
         scoreButton.draw(g);
-        
-        // Exit Button
         exitButton.draw(g);
 	}
 	
@@ -151,25 +131,12 @@ public class MainMenu implements Screen {
 		int mx = mouse.getX();
         int my = mouse.getY();
         
-        // Check if Hovering over Start Button
         startButton.adjustHover(mx, my);
-        
-        // Check if Hovering over Difficulty Button
         diffButton.adjustHover(mx, my);
-        
-        // Check if Hovering over Players Button
         playersButton.adjustHover(mx, my);
-        
-        // Check if Hovering over Mode Button
         modeButton.adjustHover(mx, my);
-        
-        // Check if Hovering over Score Button
         scoreButton.adjustHover(mx, my);
-        
-        // Check if Hovering over Multiplayer Button
         multiButton.adjustHover(mx, my);
-        
-        // Check if Hovering over Exit Button
         exitButton.adjustHover(mx, my);
         
 	    return this;
@@ -179,7 +146,6 @@ public class MainMenu implements Screen {
 		int mx = mouse.getX();
         int my = mouse.getY();
         
-        // Check if Start Button was pressed
 	    if(startButton.intersects(mx, my)) {
 	        if(isFirstRun == true)
 	        	return new LocalGame(screenSize, ballDiff, p2Diff, players, mode, winScore);
@@ -187,14 +153,12 @@ public class MainMenu implements Screen {
 	        	return new LocalGame(screenSize, ballDiff, p2Diff, players, mode, winScore, ballX, ballY, p1Y, p2Y, xDir, yDir, p1Score, p2Score);
 	    }
 	    
-	    // Check if Score Button was pressed
 	    if(scoreButton.intersects(mx, my)) {
 	        winScore++;
 	        if(winScore > 100)
 	            winScore = 1;
 	    }
 	    
-	    // Check if Difficulty Button was pressed
 	    if(diffButton.intersects(mx, my)) {
 	        switch(difficulty) {
 	            case 1:
@@ -218,7 +182,6 @@ public class MainMenu implements Screen {
 	        }
 	    }
 	    
-	    // Check if Players Button was pressed
 	    if(playersButton.intersects(mx, my)) {
 	        switch(players) {
 	            case 1:
@@ -230,7 +193,6 @@ public class MainMenu implements Screen {
 	        }
 	    }
 	    
-	    // Check if Mode Button was pressed
 	    if(modeButton.intersects(mx, my)) {
 	        switch(mode) {
 	            case 1:
@@ -244,11 +206,9 @@ public class MainMenu implements Screen {
 	        }
 	    }
 	    
-	    // Check if Multiplayer Button was pressed
 	    if(multiButton.intersects(mx, my))
 	    	return new MultiplayerMenu(screenSize, winScore);
 	    
-	    // Check if Exit Button was pressed
         if(exitButton.intersects(mx, my))
             Pong.quit = true;
 	    
@@ -260,7 +220,6 @@ public class MainMenu implements Screen {
         int my = mouseWheel.getY();
         int mwDir = mouseWheel.getWheelRotation();
 		
-	    // Check if just Scrolled Over Score Button
         if(scoreButton.intersects(mx, my)) {
             if(mwDir < 0)
                 winScore++;
