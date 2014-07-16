@@ -53,13 +53,15 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     static int winID;
     static Winner winner;
     
-    // Variables for Screen Size
+    /** Variables for Screen Size */
     int GWIDTH = 400, GHEIGHT = 300;
     
-    // Dimension of GWIDTH * GHEIGHT
+    /** Dimension of GWIDTH * GHEIGHT */
     Dimension screenSize = new Dimension(GWIDTH, GHEIGHT);
     
-    // Create Constructor to Spawn Window
+    /** 
+     * Create Constructor to Spawn Window
+     */
     public Pong(String[] args) {
         this.setTitle("Pong Reloaded");
         this.setSize(screenSize);
@@ -95,6 +97,9 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         this.setVisible(true);
     }
     
+    /**
+     * Program Entrance
+     */
     public static void main(String[] args) {
         p = new Pong(args);
     }
@@ -126,6 +131,9 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
 		screen = screen.windowClosingEvent(window);
 	}
 	
+    /**
+	 * Double Buffers window
+	 */
     @Override
     public void paint(Graphics g) {
         dbImage = createImage(getWidth(), getHeight());
@@ -134,6 +142,9 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         g.drawImage(dbImage, 0, 0, this);
     }
     
+    /**
+	 * Draws the current screen
+	 */
     public void draw(Graphics g) {
         super.paint(g);
         if(screen != null)
