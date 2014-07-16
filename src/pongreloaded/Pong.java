@@ -140,7 +140,8 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     
     public void draw(Graphics g) {
         super.paint(g);
-        screen.displayOutput(g);
+        if(screen != null)
+        	screen.displayOutput(g);
         evaluateFlags(g);
         repaint();
     }
