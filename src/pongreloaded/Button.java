@@ -45,7 +45,7 @@ public class Button {
     	int totalWidth = fm.stringWidth(text);
     	int totalHeight = fm.getHeight();
     	tx = ((rec.width - totalWidth) / 2) + rec.x;
-        ty = ((rec.height - totalHeight) / 2) + rec.y + 17;
+    	ty = ((rec.height - totalHeight) / 2) + rec.y + totalHeight - fm.getDescent();
     }
     
     public void adjustHover(int x, int y) {

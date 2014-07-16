@@ -38,20 +38,16 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     @SuppressWarnings("unused")
 	private static Pong p;
     static Screen screen;
-    Screens screens;
     
     // FPS
     private long now;
     private long framesTimer = 0;
-    @SuppressWarnings("unused")
-	private long beforeTime;
     private int framesCount = 0;
     private int framesCountAvg = 0;
     
     // Flags
     static boolean quit = false;
     static boolean retro = false;
-    static boolean disposeMainMenu = false;
     static boolean isFinished = false;
     static boolean showFPS = false;
     static int winID;
@@ -172,7 +168,6 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         }
         
         if(showFPS == true) {
-        	beforeTime = System.nanoTime();
         	now = System.currentTimeMillis();
         	g.setColor(Color.GRAY);
         	g.drawString(""+framesCountAvg, 5, 37);

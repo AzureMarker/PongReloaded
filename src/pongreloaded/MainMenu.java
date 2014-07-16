@@ -245,10 +245,8 @@ public class MainMenu implements Screen {
 	    }
 	    
 	    // Check if Multiplayer Button was pressed
-	    if(multiButton.intersects(mx, my)) {
-	    	Pong.disposeMainMenu = true;
+	    if(multiButton.intersects(mx, my))
 	    	return new MultiplayerMenu(screenSize, winScore);
-	    }
 	    
 	    // Check if Exit Button was pressed
         if(exitButton.intersects(mx, my))
