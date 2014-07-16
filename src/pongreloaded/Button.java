@@ -3,17 +3,23 @@ package pongreloaded;
 import java.awt.*;
 
 public class Button {
-	private Rectangle rec;
-    private String text;
     private int tx, ty;
     private boolean hover;
     private boolean center;
+    private Rectangle rec;
+    private String text;
+    private Font font;
     
     public Button(int x, int y, int width, int height, String text) {
-        rec = new Rectangle(x, y, width, height);
+        this(x, y, width, height, text, new Font("Arial", Font.BOLD, 12));
+    }
+    
+    public Button(int x, int y, int width, int height, String text, Font font) {
+    	rec = new Rectangle(x, y, width, height);
         setHover(false);
         setCenter(true);
         setText(text);
+        setFont(font);
     }
     
     public void draw(Graphics g) {
@@ -28,7 +34,7 @@ public class Button {
     	else
     		g.setColor(Color.PINK);
         g.fillRect(rec.x, rec.y, rec.width, rec.height);
-        g.setFont(new Font("Arial", Font.BOLD, 12));
+        g.setFont(font);
         g.setColor(Color.GRAY);
         g.drawString(getText(), getTextX(), getTextY());
     }
@@ -37,8 +43,9 @@ public class Button {
     	g.setFont(new Font("Arial", Font.BOLD, 12));
     	FontMetrics fm = g.getFontMetrics();
     	int totalWidth = fm.stringWidth(text);
+    	int totalHeight = fm.getHeight();
     	tx = ((rec.width - totalWidth) / 2) + rec.x;
-        ty = rec.y + 17;
+        ty = ((rec.height - totalHeight) / 2) + rec.y + 17;
     }
     
     public void adjustHover(int x, int y) {
@@ -97,6 +104,14 @@ public class Button {
     
     public boolean getCenter() {
     	return center;
+    }
+    
+    public void setFont(Font font) {
+    	this.font = font;
+    }
+    
+    public Font getFont() {
+    	return font;
     }
     
     public String toString() {
