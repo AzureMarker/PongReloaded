@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
 import javax.swing.*;
 
 /**
@@ -12,36 +13,44 @@ import javax.swing.*;
  */
 public class MultiplayerGame implements Screen {
 	// Multiplayer Connection
-    String ip;
-    String inLine;
-    String outLine;
-    String[] inFormat = new String[10];
-    int port;
-    int hostPort;
-    int playerNum = 3;
-    int otherPlayerNum = 3;
-    int[] msgBody = new int[9];
-    int[] arrayXY = new int[9];
-    boolean isHost;
-    boolean acceptedStop = false;
-    boolean remoteAcceptedStop = false;
-    ServerSocket server;
-    Socket socket;
-    BufferedReader in;
-    PrintWriter out;
-    Runnable socketWork;
+	@SuppressWarnings("unused")
+	private String 
+		ip,
+		inLine,
+		outLine;
+	private String[] inFormat = new String[10];
+    @SuppressWarnings("unused")
+	private int 
+    	port,
+    	hostPort,
+    	playerNum = 3,
+    	otherPlayerNum = 3;
+    private int[] 
+    	msgBody = new int[9],
+    	arrayXY = new int[9];
+    private boolean 
+    	isHost,
+    	acceptedStop = false,
+    	remoteAcceptedStop = false;
+    private ServerSocket server;
+    private Socket socket;
+    private BufferedReader in;
+    private PrintWriter out;
+    private Runnable socketWork;
 	
 	// Game
-	Ball bClient;
-	int winScore;
-	int cachedP1Score = 0;
-	int cachedP2Score = 0;
+    private Ball bClient;
+    private int 
+    	winScore,
+		cachedP1Score = 0,
+		cachedP2Score = 0;
 	
 	// Threads
-	Thread bC;
-    Thread pC;
-    Thread pM;
-    Thread sW;
+    private Thread 
+    	bC,
+    	pC,
+    	pM,
+    	sW;
 	
 	public MultiplayerGame(String ip, int port, int winScore) {
 		this.ip = ip;
@@ -77,23 +86,23 @@ public class MultiplayerGame implements Screen {
     }
 	
 	public boolean isFinished() {
-		return bClient.p1Score >= winScore || bClient.p2Score >= winScore ? true : false;
+		return bClient.getP1Score() >= winScore || bClient.getP2Score() >= winScore ? true : false;
     }
     
     public int getWinner() {
-    	if(bClient.p1Score >= winScore)
+    	if(bClient.getP1Score() >= winScore)
             return 1;
-        if(bClient.p2Score >= winScore)
+        if(bClient.getP2Score() >= winScore)
             return 2;
         return 0;
     }
     
     public void updateScore() {
-    	if(isHost && bClient.p1Score != cachedP1Score || bClient.p2Score != cachedP2Score) {
+    	if(isHost && bClient.getP1Score() != cachedP1Score || bClient.getP2Score() != cachedP2Score) {
     		System.out.println("Scores aren't syncronized, updating...");
     		sendUpdatedScore();
-    		cachedP1Score = bClient.p1Score;
-    		cachedP2Score = bClient.p2Score;
+    		cachedP1Score = bClient.getP1Score();
+    		cachedP2Score = bClient.getP2Score();
     	}
     }
 	
@@ -234,8 +243,8 @@ public class MultiplayerGame implements Screen {
 			    }
 				
 				public void getUpdatedScore() {
-					bClient.p1Score = arrayXY[0];
-					bClient.p2Score = arrayXY[1];
+					bClient.setP1Score(arrayXY[0]);
+					bClient.setP2Score(arrayXY[1]);
 				}
 				
 				public void checkForPacket() {
@@ -356,8 +365,8 @@ public class MultiplayerGame implements Screen {
     }
     
     public void sendUpdatedScore() {
-    	msgBody[0] = bClient.p1Score;
-    	msgBody[1] = bClient.p2Score;
+    	msgBody[0] = bClient.getP1Score();
+    	msgBody[1] = bClient.getP2Score();
     	try {
     		out.println("getUpdatedScore," + Arrays.toString(msgBody));
     	}
@@ -408,8 +417,8 @@ public class MultiplayerGame implements Screen {
         
         // Score
         g.setColor(Color.WHITE);
-        g.drawString(""+bClient.p1Score, 15, 50);
-        g.drawString(""+bClient.p2Score, 370, 50);
+        g.drawString(""+bClient.getP1Score(), 15, 50);
+        g.drawString(""+bClient.getP2Score(), 370, 50);
         
         // Send info to other player
         sendVars();
@@ -425,6 +434,10 @@ public class MultiplayerGame implements Screen {
 		return this;
 	}
 	
+	public int getPlayerNum() {
+		return playerNum;
+	}
+
 	public Screen respondToUserInput(KeyEvent key) {
 		bClient.p1.keyPressed(key);
         bClient.p2.keyPressed(key);

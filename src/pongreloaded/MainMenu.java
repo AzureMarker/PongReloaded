@@ -8,33 +8,33 @@ import java.awt.event.*;
  */
 public class MainMenu implements Screen {
 	// Buttons
-	Button startButton;
-    Button diffButton = new Button(85, 185, 100, 25, "Difficulty: ");
-    Button playersButton = new Button(215, 185, 100, 25, "Players: ");
-    Button modeButton = new Button(85, 140, 100, 25, "");
-    Button scoreButton = new Button(85, 225, 100, 25, "To Win: ");
-    Button multiButton = new Button(215, 140, 100, 25, "Multiplayer");
-    Button exitButton = new Button(215, 225, 100, 25, "Exit");
+	private Button startButton,
+    	diffButton = new Button(85, 185, 100, 25, "Difficulty: "),
+    	playersButton = new Button(215, 185, 100, 25, "Players: "),
+    	modeButton = new Button(85, 140, 100, 25, ""),
+    	scoreButton = new Button(85, 225, 100, 25, "To Win: "),
+    	multiButton = new Button(215, 140, 100, 25, "Multiplayer"),
+    	exitButton = new Button(215, 225, 100, 25, "Exit");
     
     // Game
-    boolean isFirstRun;
-    int difficulty = 1;
-    int ballDiff = 7;
-    int p2Diff = 5;
-    int players = 1;
-    int mode = 2;
-    int winScore = 10;
-    int ballX;
-    int ballY;
-    int p1Y;
-    int p2Y;
-    int xDir;
-    int yDir;
-    int p1Score;
-    int p2Score;
+    private boolean isFirstRun;
+    private int 
+    	difficulty = 1,
+    	ballDiff = 7,
+    	p2Diff = 5,
+    	players = 1,
+    	mode = 2,
+    	winScore = 10,
+    	ballX,
+    	ballY,
+    	p1Y,
+    	p2Y,
+    	xDir,
+    	yDir,
+    	p1Score,
+    	p2Score;
     
-    // Variables for Screen Size
-    Dimension screenSize;
+    private Dimension screenSize;
     
     public MainMenu(Dimension screenSize, int ballDiff, int p2Diff, int players, int mode, int winScore, int ballX, int ballY, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score) {
     	this.screenSize = screenSize;

@@ -12,8 +12,8 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
 	private static final long serialVersionUID = -6694074482949248838L;
 	
 	// Double Buffering
-    Image dbImage;
-    Graphics dbg;
+    private Image dbImage;
+    private Graphics dbg;
     
     // Multiplayer Text Fields
     static JTextField ipText = new JTextField() {
@@ -38,7 +38,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     // Game
     @SuppressWarnings("unused")
 	private static Pong p;
-    static Screen screen;
+    private Screen screen;
     
     // FPS
     private long now;
@@ -55,10 +55,10 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     static Winner winner;
     
     /** Variables for Screen Size */
-    int GWIDTH = 400, GHEIGHT = 300;
+    private int GWIDTH = 400, GHEIGHT = 300;
     
     /** Dimension of GWIDTH * GHEIGHT */
-    Dimension screenSize = new Dimension(GWIDTH, GHEIGHT);
+    private Dimension screenSize = new Dimension(GWIDTH, GHEIGHT);
     
     /** 
      * Create Constructor to Spawn Window

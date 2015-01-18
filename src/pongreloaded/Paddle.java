@@ -9,23 +9,20 @@ import java.awt.event.KeyEvent;
  * @author Mcat12
  */
 public class Paddle implements Runnable {
-    // Global Variables
-    volatile boolean isPaused = false;
-    volatile boolean stop = false;
-    int x, y, yDirection, id, playerNum;
-    Screen screen;
-    
-    // Difficulty
-    int difficulty = 5;
-    
-    // Mode
-    int mode = 2;
-    
-    // Players
-    int players = 1;
-    
-    // Paddle Object
-    Rectangle paddle;
+	private volatile boolean 
+		isPaused = false,
+    	stop = false;
+	protected int 
+    	x, 
+    	y, 
+    	yDirection, 
+    	id, 
+    	playerNum,
+    	difficulty = 5,
+    	mode = 2,
+    	players = 1;
+	private Screen screen;
+	protected Rectangle paddle;
     
     public Paddle(int x, int y, int id, LocalGame screen) {
     	this.x = x;
@@ -40,7 +37,7 @@ public class Paddle implements Runnable {
         this.y = y;
         this.id = id;
         this.screen = screen;
-        playerNum = screen.playerNum;
+        playerNum = screen.getPlayerNum();
         paddle = new Rectangle(x, y, 10, 50);
     }
     

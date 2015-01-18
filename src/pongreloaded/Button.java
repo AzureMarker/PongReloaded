@@ -4,8 +4,7 @@ import java.awt.*;
 
 public class Button {
     private int tx, ty;
-    private boolean hover;
-    private boolean center;
+    private boolean hover, center;
     private Rectangle rec;
     private String text;
     private Font font;

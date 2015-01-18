@@ -12,16 +12,11 @@ import javax.xml.stream.events.*;
  * @author Mcat12
  */
 public class FinishScreen implements Screen {
-	// Button
-	Button mainMenuButton = new Button(100, 275, 200, 25, "Main Menu");
-	
-	// Display
-	Dimension screenSize;
-	
-	// Winner
-	int winID;
-	ArrayList<Winner> winners;
-	Winner winner;
+	private Button mainMenuButton = new Button(100, 275, 200, 25, "Main Menu");
+	private Dimension screenSize;
+	private int winID;
+	private ArrayList<Winner> winners;
+	private Winner winner;
 	
 	public FinishScreen(Dimension screenSize, int winID, Winner winner) {
 		this.screenSize = screenSize;

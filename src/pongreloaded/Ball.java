@@ -7,24 +7,20 @@ import java.util.*;
  * @author Mcat12
  */
 public class Ball implements Runnable {
-    // Global variables
-    volatile boolean isPaused = false;
-    volatile boolean stop = false;
-    int x, y, xDirection, yDirection;
-    
-    // Difficulty
-    int difficulty = 7;
-    
-    // Score
-    int p1Score, p2Score;
-    int winScore = 10;
-    
-    // Player Paddle Objects
-    Paddle p1;
-    Paddle p2;
-    
-    // Ball Object
-    Rectangle ball;
+    private volatile boolean 
+    	isPaused = false,
+    	stop = false;
+    protected int 
+    	x,
+    	y,
+    	xDirection,
+    	yDirection,
+    	difficulty = 7,
+    	p1Score,
+    	p2Score,
+    	winScore = 10;
+    protected Paddle p1, p2;
+    private Rectangle ball;
     
     public Ball(int x, int y, boolean paddles, LocalGame LGscreen) {
         p1Score = p2Score = 0;
@@ -79,8 +75,8 @@ public class Ball implements Runnable {
     public Ball(int x, int y, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score, LocalGame LGscreen) {
         this.x = x;
         this.y = y;
-        this.p1Score = p1Score;
-        this.p2Score = p2Score;
+        this.setP1Score(p1Score);
+        this.setP2Score(p2Score);
         
         setXDirection(xDir);
         setYDirection(yDir);
@@ -162,11 +158,35 @@ public class Ball implements Runnable {
         difficulty = diff;
     }
     
+    public int getDifficulty() {
+    	return difficulty;
+    }
+    
     public void setWinScore(int score) {
         this.winScore = score;
     }
     
-    public void setPaused(boolean sp) throws InterruptedException{
+    public int getWinScore() {
+    	return winScore;
+    }
+    
+    public int getP1Score() {
+		return p1Score;
+	}
+    
+	public void setP1Score(int p1Score) {
+		this.p1Score = p1Score;
+	}
+	
+	public int getP2Score() {
+		return p2Score;
+	}
+	
+	public void setP2Score(int p2Score) {
+		this.p2Score = p2Score;
+	}
+	
+	public void setPaused(boolean sp) throws InterruptedException{
         isPaused = sp;
     }
     

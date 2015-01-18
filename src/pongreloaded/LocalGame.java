@@ -9,23 +9,37 @@ import javax.swing.*;
  */
 public class LocalGame implements Screen {
 	// Buttons
-	Button returnButton = new Button(100, 75, 200, 25, "Return to Game");
-    Button mainMenuButton = new Button(100, 125, 200, 25, "Main Menu");
+	private Button 
+		returnButton = new Button(100, 75, 200, 25, "Return to Game"),
+    	mainMenuButton = new Button(100, 125, 200, 25, "Main Menu");
 	
 	// Game
-    Ball b;
-    boolean isPaused = false;
-    int winScore;
+	private Ball b;
+	private boolean isPaused = false;
+	private int winScore;
 	
     //Threads
-    Thread ball;
-    Thread p1;
-    Thread p2;
+	private Thread 
+		ball,
+		p1,
+		p2;
+	
+	private Dimension screenSize;
     
-    // Screen Size
-    Dimension screenSize;
-    
-    public LocalGame(Dimension screenSize, int ballDiff, int p2Diff, int players, int mode, int winScore, int ballX, int ballY, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score) {
+    public LocalGame(Dimension screenSize, 
+    		int ballDiff, 
+    		int p2Diff, 
+    		int players, 
+    		int mode, 
+    		int winScore, 
+    		int ballX, 
+    		int ballY, 
+    		int p1Y, 
+    		int p2Y, 
+    		int xDir, 
+    		int yDir, 
+    		int p1Score, 
+    		int p2Score) {
     	this.screenSize = screenSize;
     	this.winScore = winScore;
     	b = new Ball(ballX, ballY, p1Y, p2Y, xDir, yDir, p1Score, p2Score, this);
@@ -36,8 +50,8 @@ public class LocalGame implements Screen {
     	b.p1.setMode(mode);
     	b.p2.setMode(mode);
     	b.setWinScore(winScore);
-    	b.p1Score = p1Score;
-    	b.p2Score = p2Score;
+    	b.setP1Score(p1Score);
+    	b.setP2Score(p2Score);
     	ball = new Thread(b);
     	p1 = new Thread(b.p1);
     	p2 = new Thread(b.p2);
@@ -63,13 +77,13 @@ public class LocalGame implements Screen {
     }
     
     public boolean isFinished() {
-    	return b.p1Score >= winScore || b.p2Score >= winScore ? true : false;
+    	return b.getP1Score() >= winScore || b.getP2Score() >= winScore ? true : false;
     }
     
     public int getWinner() {
-    	if(b.p1Score >= winScore)
+    	if(b.getP1Score() >= winScore)
             return 1;
-        if(b.p2Score >= winScore)
+        if(b.getP2Score() >= winScore)
             return 2;
         return 0;
     }
@@ -96,8 +110,8 @@ public class LocalGame implements Screen {
         
         // Score
         g.setColor(Color.WHITE);
-        g.drawString(""+b.p1Score, 15, 50);
-        g.drawString(""+b.p2Score, 370, 50);
+        g.drawString(""+b.getP1Score(), 15, 50);
+        g.drawString(""+b.getP2Score(), 370, 50);
         
         // Check if Anyone Won
         if(isFinished() == true) {
@@ -107,9 +121,9 @@ public class LocalGame implements Screen {
   				  "Enter your name",
   				  JOptionPane.QUESTION_MESSAGE);
         	if(Pong.winID == 1)
-        		Pong.winner = new Winner(name, b.p1Score);
+        		Pong.winner = new Winner(name, b.getP1Score());
         	else
-        		Pong.winner = new Winner(name, b.p2Score);
+        		Pong.winner = new Winner(name, b.getP2Score());
         	Pong.isFinished = true;
         }
 	}
@@ -208,7 +222,20 @@ public class LocalGame implements Screen {
             	b.p1.stop();
             	b.p2.stop();
             	b.stop();
-                return new MainMenu(screenSize, b.difficulty, b.p2.difficulty, b.p2.players, b.p1.mode, b.winScore, b.getX(), b.getY(), b.p1.getY(), b.p2.getY(), b.xDirection, b.yDirection, b.p1Score, b.p2Score);
+                return new MainMenu(screenSize, 
+                		b.getDifficulty(), 
+                		b.p2.difficulty, 
+                		b.p2.players, 
+                		b.p1.mode, 
+                		b.getWinScore(), 
+                		b.getX(), 
+                		b.getY(), 
+                		b.p1.getY(), 
+                		b.p2.getY(), 
+                		b.getXDirection(), 
+                		b.getYDirection(), 
+                		b.getP1Score(), 
+                		b.getP2Score());
             }
 		}
 		

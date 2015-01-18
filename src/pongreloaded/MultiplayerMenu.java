@@ -8,14 +8,15 @@ import java.awt.event.*;
  */
 public class MultiplayerMenu implements Screen {
 	// Buttons
-	Button connectButton = new Button(50, 170, 100, 25, "Connect");
-	Button hostButton = new Button(250, 140, 100, 25, "Host");
-	Button multiToMainButton = new Button(25, 250, 100, 25, "Back");
+	private Button 
+		connectButton = new Button(50, 170, 100, 25, "Connect"),
+		hostButton = new Button(250, 140, 100, 25, "Host"),
+		multiToMainButton = new Button(25, 250, 100, 25, "Back");
     
     // Game
-    Dimension screenSize;
-    int winScore;
-    boolean isHost = false;
+	private Dimension screenSize;
+	private int winScore;
+	private boolean isHost = false;
 	
 	public MultiplayerMenu(Dimension screenSize, int winScore) {
 		this.screenSize = screenSize;
