@@ -8,17 +8,17 @@ import java.util.*;
  */
 public class Ball implements Runnable {
     private volatile boolean 
-    	isPaused = false,
-    	stop = false;
-    protected int 
-    	x,
-    	y,
-    	xDirection,
-    	yDirection,
-    	difficulty = 7,
-    	p1Score,
-    	p2Score,
-    	winScore = 10;
+        isPaused = false,
+        stop = false;
+    protected int
+        x,
+        y,
+        xDirection,
+        yDirection,
+        difficulty = 7,
+        p1Score,
+        p2Score,
+        winScore = 10;
     protected Paddle p1, p2;
     private Rectangle ball;
     
@@ -97,11 +97,11 @@ public class Ball implements Runnable {
     }
     
     public int getXDirection() {
-    	return xDirection;
+        return xDirection;
     }
     
     public int getYDirection() {
-    	return yDirection;
+        return yDirection;
     }
     
     public void draw(Graphics g) {
@@ -139,15 +139,15 @@ public class Ball implements Runnable {
     }
     
     public void setX(int x) {
-    	this.x = x;
+        this.x = x;
     }
     
     public void setY(int y) {
-    	this.y = y;
+        this.y = y;
     }
     
     public int getX() {
-    	return ball.x;
+        return ball.x;
     }
     
     public int getY() {
@@ -159,7 +159,7 @@ public class Ball implements Runnable {
     }
     
     public int getDifficulty() {
-    	return difficulty;
+        return difficulty;
     }
     
     public void setWinScore(int score) {
@@ -167,42 +167,42 @@ public class Ball implements Runnable {
     }
     
     public int getWinScore() {
-    	return winScore;
+        return winScore;
     }
     
     public int getP1Score() {
-		return p1Score;
-	}
-    
-	public void setP1Score(int p1Score) {
-		this.p1Score = p1Score;
-	}
-	
-	public int getP2Score() {
-		return p2Score;
-	}
-	
-	public void setP2Score(int p2Score) {
-		this.p2Score = p2Score;
-	}
-	
-	public void setPaused(boolean sp) throws InterruptedException{
-        isPaused = sp;
+        return p1Score;
     }
     
+    public void setP1Score(int p1Score) {
+        this.p1Score = p1Score;
+    }
+
+    public int getP2Score() {
+        return p2Score;
+    }
+
+    public void setP2Score(int p2Score) {
+        this.p2Score = p2Score;
+    }
+
+    public void setPaused(boolean sp) throws InterruptedException{
+        isPaused = sp;
+    }
+
     public void stop() {
-    	stop = true;
+        stop = true;
     }
     
     @Override
     public void run() {
         try{
-        	while(!stop) {
-        		while(!isPaused) {
-        			move();
-    				Thread.sleep(difficulty);
-        		}
-        	}
+            while(!stop) {
+                while(!isPaused) {
+                    move();
+                    Thread.sleep(difficulty);
+                }
+            }
         }
         catch(Exception e) {
             System.err.println(e.getMessage());

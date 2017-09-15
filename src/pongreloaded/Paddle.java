@@ -9,23 +9,23 @@ import java.awt.event.KeyEvent;
  * @author Mcat12
  */
 public class Paddle implements Runnable {
-	private volatile boolean 
-		isPaused = false,
-    	stop = false;
-	protected int 
-    	x, 
-    	y, 
-    	yDirection, 
-    	id, 
-    	playerNum,
-    	difficulty = 5,
-    	mode = 2,
-    	players = 1;
-	private Screen screen;
-	protected Rectangle paddle;
+    private volatile boolean
+        isPaused = false,
+        stop = false;
+    protected int
+        x,
+        y,
+        yDirection,
+        id,
+        playerNum,
+        difficulty = 5,
+        mode = 2,
+        players = 1;
+    private Screen screen;
+    protected Rectangle paddle;
     
     public Paddle(int x, int y, int id, LocalGame screen) {
-    	this.x = x;
+        this.x = x;
         this.y = y;
         this.id = id;
         this.screen = screen;
@@ -33,7 +33,7 @@ public class Paddle implements Runnable {
     }
     
     public Paddle(int x, int y, int id, MultiplayerGame screen) {
-    	this.x = x;
+        this.x = x;
         this.y = y;
         this.id = id;
         this.screen = screen;
@@ -42,7 +42,7 @@ public class Paddle implements Runnable {
     }
     
     public void setScreen(Screen screen) {
-    	this.screen = screen;
+        this.screen = screen;
     }
     
     public void keyPressed(KeyEvent e) {
@@ -67,24 +67,24 @@ public class Paddle implements Runnable {
                 }
                 break;
             case 3:
-            	if(playerNum == 0) {
-            		if(e.getKeyCode() == KeyEvent.VK_W) {
-                    	setYDirection(-1);
-                	}
-                	if(e.getKeyCode() == KeyEvent.VK_S) {
-                    	setYDirection(+1);
-                	}
-            	}
+                if(playerNum == 0) {
+                    if(e.getKeyCode() == KeyEvent.VK_W) {
+                        setYDirection(-1);
+                    }
+                    if(e.getKeyCode() == KeyEvent.VK_S) {
+                        setYDirection(+1);
+                    }
+                }
                 break;
             case 4:
-            	if(playerNum == 1) {
-            		if(e.getKeyCode() == KeyEvent.VK_W) {
-                    	setYDirection(-1);
-                	}
-                	if(e.getKeyCode() == KeyEvent.VK_S) {
-                    	setYDirection(+1);
-                	}
-            	}
+                if(playerNum == 1) {
+                    if(e.getKeyCode() == KeyEvent.VK_W) {
+                        setYDirection(-1);
+                    }
+                    if(e.getKeyCode() == KeyEvent.VK_S) {
+                        setYDirection(+1);
+                    }
+                }
                 break;
         }
     }
@@ -111,24 +111,24 @@ public class Paddle implements Runnable {
                 }
                 break;
             case 3:
-            	if(playerNum == 0) {
-            		if(e.getKeyCode() == KeyEvent.VK_W) {
-            			setYDirection(0);
-            		}
-            		if(e.getKeyCode() == KeyEvent.VK_S) {
-            			setYDirection(0);
-            		}
-            	}
+                if(playerNum == 0) {
+                    if(e.getKeyCode() == KeyEvent.VK_W) {
+                        setYDirection(0);
+                    }
+                    if(e.getKeyCode() == KeyEvent.VK_S) {
+                        setYDirection(0);
+                    }
+                }
                 break;
             case 4:
-            	if(playerNum == 1) {
-            		if(e.getKeyCode() == KeyEvent.VK_W) {
-                    	setYDirection(0);
-                	}
-                	if(e.getKeyCode() == KeyEvent.VK_S) {
-                    	setYDirection(0);
-                	}
-            	}
+                if(playerNum == 1) {
+                    if(e.getKeyCode() == KeyEvent.VK_W) {
+                        setYDirection(0);
+                    }
+                    if(e.getKeyCode() == KeyEvent.VK_S) {
+                        setYDirection(0);
+                    }
+                }
                 break;
         }
     }
@@ -138,11 +138,11 @@ public class Paddle implements Runnable {
     }
     
     public int getYDirection() {
-    	return yDirection;
+        return yDirection;
     }
     
     public void setPlayerNum(int playerNum) {
-    	this.playerNum = playerNum;
+        this.playerNum = playerNum;
     }
     
     public void move() {
@@ -204,11 +204,11 @@ public class Paddle implements Runnable {
     }
     
     public void setY(int y) {
-    	this.y = y;
+        this.y = y;
     }
     
     public int getY() {
-    	return paddle.y;
+        return paddle.y;
     }
     
     public void setDifficulty(int diff) {
@@ -228,7 +228,7 @@ public class Paddle implements Runnable {
     }
     
     public void stop() {
-    	stop = true;
+        stop = true;
     }
     
     @Override

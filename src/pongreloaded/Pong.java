@@ -9,35 +9,35 @@ import javax.swing.border.Border;
  * @author Mcat12
  */
 public class Pong extends JFrame implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, WindowListener {
-	private static final long serialVersionUID = -6694074482949248838L;
-	
-	// Double Buffering
+    private static final long serialVersionUID = -6694074482949248838L;
+
+    // Double Buffering
     private Image dbImage;
     private Graphics dbg;
     
     // Multiplayer Text Fields
     static JTextField ipText = new JTextField() {
-		private static final long serialVersionUID = -8131047528678819183L;
-		
-		@Override
+        private static final long serialVersionUID = -8131047528678819183L;
+
+        @Override
         public void setBorder(Border border) {}
     };
     static JTextField hostPortText = new JTextField() {
-		private static final long serialVersionUID = 1627939752505205466L;
-		
-		@Override
+        private static final long serialVersionUID = 1627939752505205466L;
+
+        @Override
         public void setBorder(Border border) {}
     };
     static JTextField connectPortText = new JTextField() {
-		private static final long serialVersionUID = -9217986345323034088L;
+        private static final long serialVersionUID = -9217986345323034088L;
 
-		@Override
+        @Override
         public void setBorder(Border border) {}
     };
     
     // Game
     @SuppressWarnings("unused")
-	private static Pong p;
+    private static Pong p;
     private Screen screen;
     
     // FPS
@@ -87,12 +87,12 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         hostPortText.setVisible(false);
         connectPortText.setVisible(false);
         for(String s : args)
-    		System.out.println("Arguments: " + s);
+            System.out.println("Arguments: " + s);
         if(args.length > 0) {
-        	if(args[0].equals("-fps")) {
-        		System.out.println("FPS mode activated");
-        		showFPS = true;
-        	}
+            if(args[0].equals("-fps")) {
+                System.out.println("FPS mode activated");
+                showFPS = true;
+            }
         }
         screen = new MainMenu(screenSize);
         this.setVisible(true);
@@ -106,35 +106,35 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     }
     
     public void keyPressed(KeyEvent key) {
-    	screen = screen.respondToUserInput(key);
+        screen = screen.respondToUserInput(key);
     }
     
     public void keyReleased(KeyEvent key) {
-    	screen = screen.respondToUserInputReleased(key);
+        screen = screen.respondToUserInputReleased(key);
     }
     
     public void keyTyped(KeyEvent key) { }
     
     public void mousePressed(MouseEvent mouse) {
-    	screen = screen.respondToUserInputClick(mouse);
+        screen = screen.respondToUserInputClick(mouse);
     }
     
     public void mouseMoved(MouseEvent mouse) {
-    	screen = screen.respondToUserInputHover(mouse);
+        screen = screen.respondToUserInputHover(mouse);
     }
     
     public void mouseWheelMoved(MouseWheelEvent mouseWheel) {
-    	screen = screen.respondToUserInput(mouseWheel);
+        screen = screen.respondToUserInput(mouseWheel);
     }
     
     @Override
-	public void windowClosing(WindowEvent window) {
-		screen = screen.windowClosingEvent(window);
-	}
-	
+    public void windowClosing(WindowEvent window) {
+        screen = screen.windowClosingEvent(window);
+    }
+
     /**
-	 * Double Buffers window
-	 */
+     * Double Buffers window
+     */
     @Override
     public void paint(Graphics g) {
         dbImage = createImage(getWidth(), getHeight());
@@ -144,51 +144,51 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     }
     
     /**
-	 * Draws the current screen
-	 */
+     * Draws the current screen
+     */
     public void draw(Graphics g) {
         super.paint(g);
         if(screen != null)
-        	screen.displayOutput(g);
+            screen.displayOutput(g);
         evaluateFlags(g);
         repaint();
     }
     
     public void evaluateFlags(Graphics g) {
-    	if(screen.getScreenType() == Screens.MULTIMENU) {
-        	ipText.setVisible(true);
-        	connectPortText.setVisible(true);
-        	hostPortText.setVisible(true);
+        if(screen.getScreenType() == Screens.MULTIMENU) {
+            ipText.setVisible(true);
+            connectPortText.setVisible(true);
+            hostPortText.setVisible(true);
         }
         else {
-        	ipText.setVisible(false);
-        	connectPortText.setVisible(false);
-        	hostPortText.setVisible(false);
+            ipText.setVisible(false);
+            connectPortText.setVisible(false);
+            hostPortText.setVisible(false);
         }
         
         if(quit == true)
-        	dispose();
+            dispose();
         
         if(retro == true)
-        	this.getContentPane().setBackground(Color.BLACK);
+            this.getContentPane().setBackground(Color.BLACK);
         else
-        	this.getContentPane().setBackground(Color.DARK_GRAY);
+            this.getContentPane().setBackground(Color.DARK_GRAY);
         
         if(isFinished == true) {
-        	screen = new FinishScreen(screenSize, winID, winner);
-        	isFinished = false;
+            screen = new FinishScreen(screenSize, winID, winner);
+            isFinished = false;
         }
         
         if(showFPS == true) {
-        	now = System.currentTimeMillis();
-        	g.setColor(Color.GRAY);
-        	g.drawString(""+framesCountAvg, 5, 37);
-        	framesCount++;
-        	if(now - framesTimer > 1000) {
-        		framesTimer = now;
-        		framesCountAvg = framesCount;
-        		framesCount = 0;
-        	}
+            now = System.currentTimeMillis();
+            g.setColor(Color.GRAY);
+            g.drawString(""+framesCountAvg, 5, 37);
+            framesCount++;
+            if(now - framesTimer > 1000) {
+                framesTimer = now;
+                framesCountAvg = framesCount;
+                framesCount = 0;
+            }
         }
     }
     
@@ -197,10 +197,10 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     public void mouseReleased(MouseEvent mouse) {}
     public void mouseEntered(MouseEvent mouse) {}
     public void mouseExited(MouseEvent mouse) {}
-	public void windowActivated(WindowEvent window) {}
-	public void windowClosed(WindowEvent window) {}
-	public void windowDeactivated(WindowEvent window) {}
-	public void windowDeiconified(WindowEvent window) {}
-	public void windowIconified(WindowEvent window) {}
-	public void windowOpened(WindowEvent window) {}
+    public void windowActivated(WindowEvent window) {}
+    public void windowClosed(WindowEvent window) {}
+    public void windowDeactivated(WindowEvent window) {}
+    public void windowDeiconified(WindowEvent window) {}
+    public void windowIconified(WindowEvent window) {}
+    public void windowOpened(WindowEvent window) {}
 }

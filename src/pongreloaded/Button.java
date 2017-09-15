@@ -14,7 +14,7 @@ public class Button {
     }
     
     public Button(int x, int y, int width, int height, String text, Font font) {
-    	rec = new Rectangle(x, y, width, height);
+        rec = new Rectangle(x, y, width, height);
         setHover(false);
         setCenter(true);
         setText(text);
@@ -22,16 +22,16 @@ public class Button {
     }
     
     public void draw(Graphics g) {
-    	// Center Text
-    	if(center) {
-    		centerText(g);
-    		setCenter(false);
-    	}
-    	
-    	if(!hover)
-    		g.setColor(Color.CYAN);
-    	else
-    		g.setColor(Color.PINK);
+        // Center Text
+        if(center) {
+            centerText(g);
+            setCenter(false);
+        }
+
+        if(!hover)
+            g.setColor(Color.CYAN);
+        else
+            g.setColor(Color.PINK);
         g.fillRect(rec.x, rec.y, rec.width, rec.height);
         g.setFont(font);
         g.setColor(Color.GRAY);
@@ -39,19 +39,19 @@ public class Button {
     }
     
     protected void centerText(Graphics g) {
-    	g.setFont(new Font("Arial", Font.BOLD, 12));
-    	FontMetrics fm = g.getFontMetrics();
-    	int totalWidth = fm.stringWidth(text);
-    	int totalHeight = fm.getHeight();
-    	tx = ((rec.width - totalWidth) / 2) + rec.x;
-    	ty = ((rec.height - totalHeight) / 2) + rec.y + totalHeight - fm.getDescent();
+        g.setFont(new Font("Arial", Font.BOLD, 12));
+        FontMetrics fm = g.getFontMetrics();
+        int totalWidth = fm.stringWidth(text);
+        int totalHeight = fm.getHeight();
+        tx = ((rec.width - totalWidth) / 2) + rec.x;
+        ty = ((rec.height - totalHeight) / 2) + rec.y + totalHeight - fm.getDescent();
     }
     
     public void adjustHover(int x, int y) {
-    	if(intersects(x, y))
-    		setHover(true);
-    	else
-    		setHover(false);
+        if(intersects(x, y))
+            setHover(true);
+        else
+            setHover(false);
     }
     
     public boolean intersects(int x, int y) {
@@ -68,16 +68,16 @@ public class Button {
     }
     
     public void setTextXY(int tx, int ty) {
-    	this.tx = tx;
-    	this.ty = ty;
+        this.tx = tx;
+        this.ty = ty;
     }
     
     public int getTextX() {
-    	return tx;
+        return tx;
     }
     
     public int getTextY() {
-    	return ty;
+        return ty;
     }
     
     public void setRectangle(Rectangle rec) {
@@ -90,27 +90,27 @@ public class Button {
     }
     
     public void setHover(boolean hover) {
-    	this.hover = hover;
+        this.hover = hover;
     }
     
     public boolean getHover() {
-    	return hover;
+        return hover;
     }
     
     public void setCenter(boolean center) {
-    	this.center = center;
+        this.center = center;
     }
     
     public boolean getCenter() {
-    	return center;
+        return center;
     }
     
     public void setFont(Font font) {
-    	this.font = font;
+        this.font = font;
     }
     
     public Font getFont() {
-    	return font;
+        return font;
     }
     
     public String toString() {
