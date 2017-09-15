@@ -6,23 +6,21 @@ import java.util.*;
 /**
  * @author Mcat12
  */
-public class Ball implements Runnable {
-    private volatile boolean 
-        isPaused = false,
-        stop = false;
-    protected int
-        x,
-        y,
-        xDirection,
-        yDirection,
-        difficulty = 7,
-        p1Score,
-        p2Score,
-        winScore = 10;
-    protected Paddle p1, p2;
+class Ball implements Runnable {
+    private volatile boolean isPaused = false;
+    private volatile boolean stop = false;
+    private int x;
+    private int y;
+    private int xDirection;
+    private int yDirection;
+    private int difficulty = 7;
+    private int p1Score;
+    private int p2Score;
+    private int winScore = 10;
+    Paddle p1, p2;
     private Rectangle ball;
     
-    public Ball(int x, int y, boolean paddles, LocalGame LGscreen) {
+    Ball(int x, int y, LocalGame LGscreen) {
         p1Score = p2Score = 0;
         this.x = x;
         this.y = y;
@@ -40,14 +38,13 @@ public class Ball implements Runnable {
         
         // Create the Ball
         ball = new Rectangle(this.x, this.y, 7, 7);
-        
-        if(paddles) {
-            p1 = new Paddle(15, 140, 1, LGscreen);
-            p2 = new Paddle(370, 140, 2, LGscreen);
-        }
+
+        // Create paddles
+        p1 = new Paddle(15, 140, 1, LGscreen);
+        p2 = new Paddle(370, 140, 2, LGscreen);
     }
     
-    public Ball(int x, int y, boolean paddles, MultiplayerGame MGscreen) {
+    Ball(int x, int y, MultiplayerGame MGscreen) {
         p1Score = p2Score = 0;
         this.x = x;
         this.y = y;
@@ -65,14 +62,13 @@ public class Ball implements Runnable {
         
         // Create 'ball'
         ball = new Rectangle(this.x, this.y, 7, 7);
-        
-        if(paddles) {
-            p1 = new Paddle(15, 140, 3, MGscreen);
-            p2 = new Paddle(370, 140, 4, MGscreen);
-        }
+
+        // Create paddles
+        p1 = new Paddle(15, 140, 3, MGscreen);
+        p2 = new Paddle(370, 140, 4, MGscreen);
     }
     
-    public Ball(int x, int y, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score, LocalGame LGscreen) {
+    Ball(int x, int y, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score, LocalGame LGscreen) {
         this.x = x;
         this.y = y;
         this.setP1Score(p1Score);
@@ -88,28 +84,28 @@ public class Ball implements Runnable {
         p2 = new Paddle(370, p2Y, 2, LGscreen);
     }
     
-    public void setXDirection(int xdir) {
+    void setXDirection(int xdir) {
         xDirection = xdir;
     }
     
-    public void setYDirection(int ydir) {
+    void setYDirection(int ydir) {
         yDirection = ydir;
     }
     
-    public int getXDirection() {
+    int getXDirection() {
         return xDirection;
     }
     
-    public int getYDirection() {
+    int getYDirection() {
         return yDirection;
     }
     
-    public void draw(Graphics g) {
+    void draw(Graphics g) {
         g.setColor(Color.WHITE);
         g.fillRect(ball.x, ball.y, ball.width, ball.height);
     }
     
-    public void collision() {
+    private void collision() {
         if(ball.intersects(p1.paddle)) {
             setXDirection(+1);
         }
@@ -118,7 +114,7 @@ public class Ball implements Runnable {
         }
     }
     
-    public void move() {
+    private void move() {
         collision();
         ball.x += xDirection;
         ball.y += yDirection;
@@ -138,59 +134,59 @@ public class Ball implements Runnable {
             setYDirection(-1);
     }
     
-    public void setX(int x) {
+    void setX(int x) {
         this.x = x;
     }
     
-    public void setY(int y) {
+    void setY(int y) {
         this.y = y;
     }
     
-    public int getX() {
+    int getX() {
         return ball.x;
     }
     
-    public int getY() {
+    int getY() {
         return ball.y;
     }
     
-    public void setDifficulty(int diff) {
+    void setDifficulty(int diff) {
         difficulty = diff;
     }
     
-    public int getDifficulty() {
+    int getDifficulty() {
         return difficulty;
     }
     
-    public void setWinScore(int score) {
+    void setWinScore(int score) {
         this.winScore = score;
     }
     
-    public int getWinScore() {
+    int getWinScore() {
         return winScore;
     }
     
-    public int getP1Score() {
+    int getP1Score() {
         return p1Score;
     }
     
-    public void setP1Score(int p1Score) {
+    void setP1Score(int p1Score) {
         this.p1Score = p1Score;
     }
 
-    public int getP2Score() {
+    int getP2Score() {
         return p2Score;
     }
 
-    public void setP2Score(int p2Score) {
+    void setP2Score(int p2Score) {
         this.p2Score = p2Score;
     }
 
-    public void setPaused(boolean sp) throws InterruptedException{
+    void setPaused(boolean sp) {
         isPaused = sp;
     }
 
-    public void stop() {
+    void stop() {
         stop = true;
     }
     

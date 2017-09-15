@@ -10,21 +10,19 @@ import java.awt.event.WindowEvent;
  * @author Mcat12
  */
 public interface Screen {
-    public void displayOutput(Graphics g);
+    void displayOutput(Graphics g);
     
-    public Screens getScreenType();
+    Screens getScreenType();
+
+    Screen respondToUserInput(KeyEvent key);
     
-    public Screen getScreen();
+    Screen respondToUserInputReleased(KeyEvent key);
     
-    public Screen respondToUserInput(KeyEvent key);
+    Screen respondToUserInputHover(MouseEvent mouse);
     
-    public Screen respondToUserInputReleased(KeyEvent key);
+    Screen respondToUserInputClick(MouseEvent mouse);
     
-    public Screen respondToUserInputHover(MouseEvent mouse);
+    Screen respondToUserInput(MouseWheelEvent mouse);
     
-    public Screen respondToUserInputClick(MouseEvent mouse);
-    
-    public Screen respondToUserInput(MouseWheelEvent mouse);
-    
-    public Screen windowClosingEvent(WindowEvent window);
+    Screen windowClosingEvent(WindowEvent window);
 }

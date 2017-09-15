@@ -9,5 +9,5 @@ public enum Screens {
     LOCALGAME,
     MULTIGAME,
     LOCALPAUSE,
-    FINSIH;
+    FINSIH
 }

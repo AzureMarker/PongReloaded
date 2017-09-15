@@ -9,9 +9,8 @@ import javax.swing.*;
  */
 public class LocalGame implements Screen {
     // Buttons
-    private Button
-        returnButton = new Button(100, 75, 200, 25, "Return to Game"),
-        mainMenuButton = new Button(100, 125, 200, 25, "Main Menu");
+    private Button returnButton = new Button(100, 75, 200, 25, "Return to Game");
+    private Button mainMenuButton = new Button(100, 125, 200, 25, "Main Menu");
 
     // Game
     private Ball b;
@@ -19,27 +18,26 @@ public class LocalGame implements Screen {
     private int winScore;
 
     //Threads
-    private Thread
-        ball,
-        p1,
-        p2;
+    private Thread ball;
+    private Thread p1;
+    private Thread p2;
 
     private Dimension screenSize;
     
-    public LocalGame(Dimension screenSize, 
-            int ballDiff,
-            int p2Diff,
-            int players,
-            int mode,
-            int winScore,
-            int ballX,
-            int ballY,
-            int p1Y,
-            int p2Y,
-            int xDir,
-            int yDir,
-            int p1Score,
-            int p2Score) {
+    LocalGame(Dimension screenSize,
+              int ballDiff,
+              int p2Diff,
+              int players,
+              int mode,
+              int winScore,
+              int ballX,
+              int ballY,
+              int p1Y,
+              int p2Y,
+              int xDir,
+              int yDir,
+              int p1Score,
+              int p2Score) {
         this.screenSize = screenSize;
         this.winScore = winScore;
         b = new Ball(ballX, ballY, p1Y, p2Y, xDir, yDir, p1Score, p2Score, this);
@@ -59,10 +57,10 @@ public class LocalGame implements Screen {
         startLocalGame();
     }
     
-    public LocalGame(Dimension screenSize, int ballDiff, int p2Diff, int players, int mode, int winScore) {
+    LocalGame(Dimension screenSize, int ballDiff, int p2Diff, int players, int mode, int winScore) {
         this.screenSize = screenSize;
         this.winScore = winScore;
-        b = new Ball(193, 143, true, this);
+        b = new Ball(193, 143, this);
         ball = new Thread(b);
         p1 = new Thread(b.p1);
         p2 = new Thread(b.p2);
@@ -76,11 +74,11 @@ public class LocalGame implements Screen {
         startLocalGame();
     }
     
-    public boolean isFinished() {
-        return b.getP1Score() >= winScore || b.getP2Score() >= winScore ? true : false;
+    private boolean isFinished() {
+        return b.getP1Score() >= winScore || b.getP2Score() >= winScore;
     }
     
-    public int getWinner() {
+    private int getWinner() {
         if(b.getP1Score() >= winScore)
             return 1;
         if(b.getP2Score() >= winScore)
@@ -88,11 +86,11 @@ public class LocalGame implements Screen {
         return 0;
     }
     
-    public int getBallY() {
+    int getBallY() {
         return b.getY();
     }
     
-    public void startLocalGame() {
+    private void startLocalGame() {
         ball.start();
         p1.start();
         p2.start();
@@ -114,7 +112,7 @@ public class LocalGame implements Screen {
         g.drawString(""+b.getP2Score(), 370, 50);
         
         // Check if Anyone Won
-        if(isFinished() == true) {
+        if(isFinished()) {
             Pong.winID = getWinner();
             String name = JOptionPane.showInputDialog(null,
                   "What is your name?",
@@ -131,7 +129,7 @@ public class LocalGame implements Screen {
     public void displayOutput(Graphics g) {
         drawLocalGame(g);
 
-        if(isPaused == true) {
+        if(isPaused) {
             // Shade Background
             g.setColor(new Color(0f,0f,0f,0.3f));
             g.fillRect(0,0, screenSize.width, screenSize.height);
@@ -143,20 +141,16 @@ public class LocalGame implements Screen {
     }
 
     public Screens getScreenType() {
-        return isPaused == true ? Screens.LOCALPAUSE : Screens.LOCALGAME;
+        return isPaused ? Screens.LOCALPAUSE : Screens.LOCALGAME;
     }
 
-    public Screen getScreen() {
-        return this;
-    }
-
-    public void menuKeyHandler(KeyEvent key) throws InterruptedException{
+    private void menuKeyHandler(KeyEvent key) throws InterruptedException{
         if(key.getKeyCode() == KeyEvent.VK_ESCAPE)
             switchLocalPause();
     }
 
-    public void switchLocalPause() throws InterruptedException{
-        if(isPaused == false) {
+    private void switchLocalPause() throws InterruptedException{
+        if(!isPaused) {
             isPaused = true;
             b.setPaused(true);
             b.p1.setPaused(true);
@@ -192,7 +186,7 @@ public class LocalGame implements Screen {
     }
 
     public Screen respondToUserInputHover(MouseEvent mouse) {
-        if(isPaused == true) {
+        if(isPaused) {
             int mx = mouse.getX();
             int my = mouse.getY();
 
@@ -204,7 +198,7 @@ public class LocalGame implements Screen {
     }
 
     public Screen respondToUserInputClick(MouseEvent mouse) {
-        if(isPaused == true) {
+        if(isPaused) {
             int mx = mouse.getX();
             int my = mouse.getY();
             
@@ -224,9 +218,9 @@ public class LocalGame implements Screen {
                 b.stop();
                 return new MainMenu(screenSize, 
                         b.getDifficulty(),
-                        b.p2.difficulty,
-                        b.p2.players,
-                        b.p1.mode,
+                        b.p2.getDifficulty(),
+                        b.p2.getPlayers(),
+                        b.p1.getMode(),
                         b.getWinScore(),
                         b.getX(),
                         b.getY(),

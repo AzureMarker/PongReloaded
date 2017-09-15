@@ -18,7 +18,7 @@ public class FinishScreen implements Screen {
     private ArrayList<Winner> winners;
     private Winner winner;
 
-    public FinishScreen(Dimension screenSize, int winID, Winner winner) {
+    FinishScreen(Dimension screenSize, int winID, Winner winner) {
         this.screenSize = screenSize;
         this.winID = winID;
         this.winner = winner;
@@ -29,7 +29,7 @@ public class FinishScreen implements Screen {
     /**
      * Sets up the winners ArrayList
      */
-    public void setupLeaderboard() {
+    private void setupLeaderboard() {
         getWinners();
         Collections.sort(winners);
         Collections.reverse(winners);
@@ -49,8 +49,8 @@ public class FinishScreen implements Screen {
     /**
      * Reads the file and writes to the winners ArrayList
      */
-    public void getWinners() {
-        winners = new ArrayList<Winner>();
+    private void getWinners() {
+        winners = new ArrayList<>();
         try {
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
             InputStream in = new FileInputStream("leaderboard.xml");
@@ -84,9 +84,7 @@ public class FinishScreen implements Screen {
                 }
             }
         }
-        catch(FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (XMLStreamException e) {
+        catch(FileNotFoundException | XMLStreamException e) {
             e.printStackTrace();
         }
         winners.add(winner);
@@ -95,7 +93,7 @@ public class FinishScreen implements Screen {
     /**
      * Saves the file from winners ArrayList
      */
-    public void saveConfig() throws Exception {
+    private void saveConfig() throws Exception {
         XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
         XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream("leaderboard.xml"));
         XMLEventFactory eventFactory = XMLEventFactory.newInstance();
@@ -187,10 +185,6 @@ public class FinishScreen implements Screen {
 
     public Screens getScreenType() {
         return Screens.FINSIH;
-    }
-
-    public Screen getScreen() {
-        return this;
     }
 
     public Screen respondToUserInput(KeyEvent key) {

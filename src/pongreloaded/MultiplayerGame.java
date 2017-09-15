@@ -12,70 +12,53 @@ import javax.swing.*;
  * @author Mcat12
  */
 public class MultiplayerGame implements Screen {
-    // Multiplayer Connection
-    @SuppressWarnings("unused")
-    private String
-        ip,
-        inLine,
-        outLine;
+    private String inLine;
     private String[] inFormat = new String[10];
-    @SuppressWarnings("unused")
-    private int
-        port,
-        hostPort,
-        playerNum = 3,
-        otherPlayerNum = 3;
-    private int[] 
-        msgBody = new int[9],
-        arrayXY = new int[9];
-    private boolean 
-        isHost,
-        acceptedStop = false,
-        remoteAcceptedStop = false;
-    private ServerSocket server;
+    private int hostPort;
+    private int playerNum = 3;
+    private int otherPlayerNum = 3;
+    private int[] msgBody = new int[9];
+    private int[] arrayXY = new int[9];
+    private boolean isHost;
+    private boolean acceptedStop = false;
+    private boolean remoteAcceptedStop = false;
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
-    private Runnable socketWork;
 
     // Game
     private Ball bClient;
-    private int 
-        winScore,
-        cachedP1Score = 0,
-        cachedP2Score = 0;
+    private int winScore;
+    private int cachedP1Score = 0;
+    private int cachedP2Score = 0;
 
     // Threads
-    private Thread 
-        bC,
-        pC,
-        pM,
-        sW;
+    private Thread bC;
+    private Thread pC;
+    private Thread pM;
 
-    public MultiplayerGame(String ip, int port, int winScore) {
-        this.ip = ip;
-        this.port = port;
+    MultiplayerGame(String ip, int port, int winScore) {
         this.winScore = winScore;
         isHost = false;
-        bClient = new Ball(193, 143, true, this);
+        bClient = new Ball(193, 143, this);
         bC = new Thread(bClient);
         pC = new Thread(bClient.p1);
         pM = new Thread(bClient.p2);
         connect(ip, port);
     }
 
-    public MultiplayerGame(int hostPort, int winScore) {
+    MultiplayerGame(int hostPort, int winScore) {
         this.hostPort = hostPort;
         this.winScore = winScore;
         isHost = true;
-        bClient = new Ball(193, 143, true, this);
+        bClient = new Ball(193, 143, this);
         bC = new Thread(bClient);
         pC = new Thread(bClient.p1);
         pM = new Thread(bClient.p2);
         host();
     }
 
-    public void startRemoteGame() {
+    private void startRemoteGame() {
         System.out.println("Starting Remote Game");
         bC.start();
         pC.start();
@@ -86,7 +69,7 @@ public class MultiplayerGame implements Screen {
     }
 
     public boolean isFinished() {
-        return bClient.getP1Score() >= winScore || bClient.getP2Score() >= winScore ? true : false;
+        return bClient.getP1Score() >= winScore || bClient.getP2Score() >= winScore;
     }
     
     public int getWinner() {
@@ -97,7 +80,7 @@ public class MultiplayerGame implements Screen {
         return 0;
     }
     
-    public void updateScore() {
+    private void updateScore() {
         if(isHost && bClient.getP1Score() != cachedP1Score || bClient.getP2Score() != cachedP2Score) {
             System.out.println("Scores aren't syncronized, updating...");
             sendUpdatedScore();
@@ -106,10 +89,10 @@ public class MultiplayerGame implements Screen {
         }
     }
 
-    public void host() {
+    private void host() {
         System.out.println("Server Initializing...");
         try {
-            server = new ServerSocket(hostPort);
+            ServerSocket server = new ServerSocket(hostPort);
             System.out.println("Created Server, waiting for Client...");
             socket = server.accept();
             System.out.println("Client connected, setting up I/O");
@@ -125,7 +108,7 @@ public class MultiplayerGame implements Screen {
         }
     }
     
-    public void connect(String ip, int port) {
+    private void connect(String ip, int port) {
         System.out.println("Client Initializing...");
         try {
             socket = new Socket(ip, port);
@@ -147,7 +130,7 @@ public class MultiplayerGame implements Screen {
         
     }
     
-    public void getPlayerNumber() {
+    private void getPlayerNumber() {
         Object[] options = {
                 "Player 1",
                 "Player 2"
@@ -211,20 +194,19 @@ public class MultiplayerGame implements Screen {
         sendNBVars();
     }
     
-    public void setUpIO() {
+    private void setUpIO() {
         try {
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            socketWork = new Runnable() {
+            Runnable socketWork = new Runnable() {
                 boolean isRunning = true;
 
-                public void getVariables() {
-                    if(isHost) {
+                void getVariables() {
+                    if (isHost) {
                         bClient.p2.setY(arrayXY[0]);
                         bClient.p2.setYDirection(arrayXY[1]);
                         otherPlayerNum = arrayXY[2];
-                    }
-                    else {
+                    } else {
                         bClient.p1.setY(arrayXY[0]);
                         bClient.p1.setYDirection(arrayXY[1]);
                         bClient.setX(arrayXY[2]);
@@ -236,29 +218,29 @@ public class MultiplayerGame implements Screen {
                     }
                 }
 
-                public void getNBVariables() {
-                    if(!isHost)
-                        bClient.winScore = arrayXY[0];
+                void getNBVariables() {
+                    if (!isHost)
+                        bClient.setWinScore(arrayXY[0]);
                     otherPlayerNum = arrayXY[1];
                 }
 
-                public void getUpdatedScore() {
+                void getUpdatedScore() {
                     bClient.setP1Score(arrayXY[0]);
                     bClient.setP2Score(arrayXY[1]);
                 }
 
-                public void checkForPacket() {
+                void checkForPacket() {
                     try {
-                        if(in.readLine() != null) {
+                        if (in.readLine() != null) {
                             inLine = in.readLine();
                             inFormat = inLine.split(",");
                             inFormat[1] = inFormat[1].replace("[", "");
                             inFormat[9] = inFormat[9].replace("]", "");
-                            for(int i = 1; i < 10; i++) {
-                                arrayXY[i-1] = Integer.parseInt(inFormat[i].trim());
+                            for (int i = 1; i < 10; i++) {
+                                arrayXY[i - 1] = Integer.parseInt(inFormat[i].trim());
                             }
 
-                            switch(inFormat[0]) {
+                            switch (inFormat[0]) {
                                 case "getVars":
                                     getVariables();
                                     break;
@@ -284,37 +266,34 @@ public class MultiplayerGame implements Screen {
                             }
 
                         }
-                    }
-                    catch (IOException e) {
+                    } catch (IOException e) {
                         System.out.println("Couldn't read input, closing connection");
                         e.printStackTrace();
                         stop();
                         closeConnection();
                         System.exit(-1);
-                    }
-                    catch(NullPointerException npe) {
+                    } catch (NullPointerException npe) {
                         System.out.println("Server closed, closing");
                         closeConnection();
                         System.exit(0);
-                    }
-                    catch(Exception e) {
+                    } catch (Exception e) {
                         System.out.println("Exception!\nMessage ID: " + inFormat[0] + "\nMessage: " + inLine);
                         e.printStackTrace();
                         System.exit(-1);
                     }
                 }
 
-                public void stop() {
+                void stop() {
                     isRunning = false;
                 }
 
                 public void run() {
-                    while(isRunning) {
+                    while (isRunning) {
                         checkForPacket();
                     }
                 }
             };
-            sW = new Thread(socketWork);
+            Thread sW = new Thread(socketWork);
             sW.start();
         }
         catch (IOException e) {
@@ -324,7 +303,7 @@ public class MultiplayerGame implements Screen {
         }
     }
     
-    public void sendVars() {
+    private void sendVars() {
         if(isHost) {
             msgBody[0] = bClient.p1.getY();
             msgBody[1] = bClient.p1.getYDirection();
@@ -350,7 +329,7 @@ public class MultiplayerGame implements Screen {
         }
     }
     
-    public void sendNBVars() {
+    private void sendNBVars() {
         if(isHost)
             msgBody[0] = winScore;
         msgBody[1] = playerNum;
@@ -364,7 +343,7 @@ public class MultiplayerGame implements Screen {
         }
     }
     
-    public void sendUpdatedScore() {
+    private void sendUpdatedScore() {
         msgBody[0] = bClient.getP1Score();
         msgBody[1] = bClient.getP2Score();
         try {
@@ -377,7 +356,7 @@ public class MultiplayerGame implements Screen {
         }
     }
     
-    public void tellHostToStop() {
+    private void tellHostToStop() {
         try {
             out.println("stop," + Arrays.toString(msgBody));
         }
@@ -388,14 +367,14 @@ public class MultiplayerGame implements Screen {
         }
     }
     
-    public void acceptStopCommand() {
+    private void acceptStopCommand() {
         try {
             out.println("acceptStop," + Arrays.toString(msgBody));
         }
-        catch(Exception e) { }
+        catch(Exception ignored) { }
     }
     
-    public void closeConnection() {
+    private void closeConnection() {
             System.out.println("Closing connection...");
             try {
                 in.close();
@@ -430,11 +409,7 @@ public class MultiplayerGame implements Screen {
         return Screens.MULTIGAME;
     }
 
-    public Screen getScreen() {
-        return this;
-    }
-
-    public int getPlayerNum() {
+    int getPlayerNum() {
         return playerNum;
     }
 

@@ -2,18 +2,18 @@ package pongreloaded;
 
 import java.awt.*;
 
-public class Button {
+class Button {
     private int tx, ty;
     private boolean hover, center;
     private Rectangle rec;
     private String text;
     private Font font;
     
-    public Button(int x, int y, int width, int height, String text) {
+    Button(int x, int y, int width, int height, String text) {
         this(x, y, width, height, text, new Font("Arial", Font.BOLD, 12));
     }
     
-    public Button(int x, int y, int width, int height, String text, Font font) {
+    private Button(int x, int y, int width, int height, String text, Font font) {
         rec = new Rectangle(x, y, width, height);
         setHover(false);
         setCenter(true);
@@ -21,7 +21,7 @@ public class Button {
         setFont(font);
     }
     
-    public void draw(Graphics g) {
+    void draw(Graphics g) {
         // Center Text
         if(center) {
             centerText(g);
@@ -38,7 +38,7 @@ public class Button {
         g.drawString(getText(), getTextX(), getTextY());
     }
     
-    protected void centerText(Graphics g) {
+    private void centerText(Graphics g) {
         g.setFont(new Font("Arial", Font.BOLD, 12));
         FontMetrics fm = g.getFontMetrics();
         int totalWidth = fm.stringWidth(text);
@@ -47,23 +47,23 @@ public class Button {
         ty = ((rec.height - totalHeight) / 2) + rec.y + totalHeight - fm.getDescent();
     }
     
-    public void adjustHover(int x, int y) {
+    void adjustHover(int x, int y) {
         if(intersects(x, y))
             setHover(true);
         else
             setHover(false);
     }
     
-    public boolean intersects(int x, int y) {
+    boolean intersects(int x, int y) {
         return (x > rec.x && x < rec.x+rec.width && y > rec.y && y < rec.y+rec.height);
     }
     
-    public void setText(String text) {
+    void setText(String text) {
         this.text = text;
         center = true;
     }
     
-    public String getText() {
+    private String getText() {
         return text;
     }
     
@@ -72,11 +72,11 @@ public class Button {
         this.ty = ty;
     }
     
-    public int getTextX() {
+    private int getTextX() {
         return tx;
     }
     
-    public int getTextY() {
+    private int getTextY() {
         return ty;
     }
     
@@ -89,7 +89,7 @@ public class Button {
         return rec;
     }
     
-    public void setHover(boolean hover) {
+    private void setHover(boolean hover) {
         this.hover = hover;
     }
     
@@ -97,7 +97,7 @@ public class Button {
         return hover;
     }
     
-    public void setCenter(boolean center) {
+    private void setCenter(boolean center) {
         this.center = center;
     }
     
@@ -105,7 +105,7 @@ public class Button {
         return center;
     }
     
-    public void setFont(Font font) {
+    private void setFont(Font font) {
         this.font = font;
     }
     

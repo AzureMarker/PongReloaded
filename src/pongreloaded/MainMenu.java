@@ -36,7 +36,7 @@ public class MainMenu implements Screen {
     
     private Dimension screenSize;
     
-    public MainMenu(Dimension screenSize, int ballDiff, int p2Diff, int players, int mode, int winScore, int ballX, int ballY, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score) {
+    MainMenu(Dimension screenSize, int ballDiff, int p2Diff, int players, int mode, int winScore, int ballX, int ballY, int p1Y, int p2Y, int xDir, int yDir, int p1Score, int p2Score) {
         this.screenSize = screenSize;
         this.ballDiff = ballDiff;
         this.p2Diff = p2Diff;
@@ -56,7 +56,7 @@ public class MainMenu implements Screen {
         System.out.println("MainMenu Full Constructor");
     }
     
-    public MainMenu(Dimension screenSize) {
+    MainMenu(Dimension screenSize) {
         this.screenSize = screenSize;
         isFirstRun = true;
         startButton = new Button(150, 100, 100, 25, "Start");
@@ -66,11 +66,7 @@ public class MainMenu implements Screen {
     public Screens getScreenType() {
         return Screens.MAINMENU;
     }
-    
-    public Screen getScreen() {
-        return this;
-    }
-    
+
     public void displayOutput(Graphics g) {
         // Menu
         g.setFont(new Font("Arial", Font.BOLD, 26));
@@ -147,7 +143,7 @@ public class MainMenu implements Screen {
         int my = mouse.getY();
         
         if(startButton.intersects(mx, my)) {
-            if(isFirstRun == true)
+            if(isFirstRun)
                 return new LocalGame(screenSize, ballDiff, p2Diff, players, mode, winScore);
             else
                 return new LocalGame(screenSize, ballDiff, p2Diff, players, mode, winScore, ballX, ballY, p1Y, p2Y, xDir, yDir, p1Score, p2Score);

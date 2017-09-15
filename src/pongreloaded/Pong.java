@@ -11,10 +11,6 @@ import javax.swing.border.Border;
 public class Pong extends JFrame implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, WindowListener {
     private static final long serialVersionUID = -6694074482949248838L;
 
-    // Double Buffering
-    private Image dbImage;
-    private Graphics dbg;
-    
     // Multiplayer Text Fields
     static JTextField ipText = new JTextField() {
         private static final long serialVersionUID = -8131047528678819183L;
@@ -34,14 +30,9 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         @Override
         public void setBorder(Border border) {}
     };
-    
-    // Game
-    @SuppressWarnings("unused")
-    private static Pong p;
+
     private Screen screen;
-    
-    // FPS
-    private long now;
+
     private long framesTimer = 0;
     private int framesCount = 0;
     private int framesCountAvg = 0;
@@ -50,7 +41,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     static boolean quit = false;
     static boolean retro = false;
     static boolean isFinished = false;
-    static boolean showFPS = false;
+    private static boolean showFPS = false;
     static int winID;
     static Winner winner;
     
@@ -63,7 +54,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     /** 
      * Create Constructor to Spawn Window
      */
-    public Pong(String[] args) {
+    private Pong(String[] args) {
         this.setTitle("Pong Reloaded");
         this.setSize(screenSize);
         this.setResizable(false);
@@ -102,7 +93,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
      * Program Entrance
      */
     public static void main(String[] args) {
-        p = new Pong(args);
+        new Pong(args);
     }
     
     public void keyPressed(KeyEvent key) {
@@ -137,8 +128,8 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
      */
     @Override
     public void paint(Graphics g) {
-        dbImage = createImage(getWidth(), getHeight());
-        dbg = dbImage.getGraphics();
+        Image dbImage = createImage(getWidth(), getHeight());
+        Graphics dbg = dbImage.getGraphics();
         draw(dbg);
         g.drawImage(dbImage, 0, 0, this);
     }
@@ -146,7 +137,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
     /**
      * Draws the current screen
      */
-    public void draw(Graphics g) {
+    private void draw(Graphics g) {
         super.paint(g);
         if(screen != null)
             screen.displayOutput(g);
@@ -154,7 +145,7 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
         repaint();
     }
     
-    public void evaluateFlags(Graphics g) {
+    private void evaluateFlags(Graphics g) {
         if(screen.getScreenType() == Screens.MULTIMENU) {
             ipText.setVisible(true);
             connectPortText.setVisible(true);
@@ -166,21 +157,21 @@ public class Pong extends JFrame implements KeyListener, MouseListener, MouseMot
             hostPortText.setVisible(false);
         }
         
-        if(quit == true)
+        if(quit)
             dispose();
         
-        if(retro == true)
+        if(retro)
             this.getContentPane().setBackground(Color.BLACK);
         else
             this.getContentPane().setBackground(Color.DARK_GRAY);
         
-        if(isFinished == true) {
+        if(isFinished) {
             screen = new FinishScreen(screenSize, winID, winner);
             isFinished = false;
         }
         
-        if(showFPS == true) {
-            now = System.currentTimeMillis();
+        if(showFPS) {
+            long now = System.currentTimeMillis();
             g.setColor(Color.GRAY);
             g.drawString(""+framesCountAvg, 5, 37);
             framesCount++;

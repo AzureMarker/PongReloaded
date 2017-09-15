@@ -16,19 +16,14 @@ public class MultiplayerMenu implements Screen {
     // Game
     private Dimension screenSize;
     private int winScore;
-    private boolean isHost = false;
 
-    public MultiplayerMenu(Dimension screenSize, int winScore) {
+    MultiplayerMenu(Dimension screenSize, int winScore) {
         this.screenSize = screenSize;
         this.winScore = winScore;
     }
 
     public Screens getScreenType() {
         return Screens.MULTIMENU;
-    }
-
-    public Screen getScreen() {
-        return this;
     }
 
     public void displayOutput(Graphics g) {
@@ -77,11 +72,7 @@ public class MultiplayerMenu implements Screen {
         int my = mouse.getY();
         
         if(connectButton.intersects(mx, my)) {
-            if(!isHost) {
-                return new MultiplayerGame(Pong.ipText.getText(), Integer.parseInt(Pong.connectPortText.getText()), winScore);
-            }
-            else
-                Pong.ipText.setText("You are host");
+            return new MultiplayerGame(Pong.ipText.getText(), Integer.parseInt(Pong.connectPortText.getText()), winScore);
         }
         
         if(hostButton.intersects(mx, my)) {
