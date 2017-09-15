@@ -268,7 +268,6 @@ public class MultiplayerGame implements Screen {
                         }
                     } catch (IOException e) {
                         System.out.println("Couldn't read input, closing connection");
-                        e.printStackTrace();
                         stop();
                         closeConnection();
                         System.exit(-1);

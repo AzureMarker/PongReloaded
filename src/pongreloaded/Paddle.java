@@ -196,6 +196,7 @@ class Paddle implements Runnable {
     }
     
     void setY(int y) {
+        paddle.y = y;
     }
     
     int getY() {
